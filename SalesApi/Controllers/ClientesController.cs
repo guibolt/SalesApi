@@ -13,24 +13,29 @@ namespace ApiForSales.Controllers
     [ApiController]
     public class ClientesController : ControllerBase
     {
+        private ComprasContext _contexto { get; set; }
+        public ClientesController(ComprasContext contexto)
+        {
+            _contexto = contexto;
+        }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Cliente cliente) => Created("", new ClienteCore().Cadastrar(cliente));
+        public async Task<IActionResult> Post([FromBody] Cliente cliente) =>  Created("", new ClienteCore(_contexto).Cadastrar(cliente));
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id) => Ok(new ClienteCore().AcharId(id));
+        public IActionResult Get(string id) => Ok(new ClienteCore(_contexto).AcharId(id));
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok(new ClienteCore().AcharTodos());
+        public async Task<IActionResult> Get() => Ok(new ClienteCore(_contexto).AcharTodos());
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody]Cliente cliente, string id) => Ok(new ClienteCore().Atualizar(id));
+        public async Task<IActionResult> Put([FromBody]Cliente cliente) => Ok(new ClienteCore(_contexto).Atualizar(cliente));
 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            new ClienteCore().DeletarUm(id);
+            new ClienteCore(_contexto).DeletarUm(id);
             return NoContent();
         }
     }

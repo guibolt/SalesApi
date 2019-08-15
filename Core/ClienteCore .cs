@@ -1,28 +1,57 @@
-﻿using Models;
+﻿using ApiForSales;
+using Microsoft.EntityFrameworkCore;
+using Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Core
 {
     public class ClienteCore
     {
-        private Cliente _cliente { get; set; }
+        private ComprasContext _contexto { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
 
-        public ClienteCore() {}
-
-        public ClienteCore(Cliente cliente)
+        public ClienteCore(ComprasContext Contexto)
         {
-            _cliente = cliente;
+            _contexto = Contexto;
+            Clientes = _contexto.Set<Cliente>();    
+        }
+        public Cliente Cadastrar(Cliente cliente)
+        {
+            Clientes.Add(cliente);
+            _contexto.SaveChanges();
+            return cliente;
         }
 
+        public Cliente AcharId(string id)  => Clientes.FirstOrDefault(c => c.Id.ToString() == id);
 
-        public Cliente Cadastrar(Cliente cliente) => cliente;
+        public List<Cliente> AcharTodos() => Clientes.ToList();
 
-        public Cliente AcharId(string id) => null;
+        public Cliente Atualizar( Cliente cliente )
+        {
+            var umCliente = Clientes.FirstOrDefault(c => c.Id == cliente.Id);
 
-        public Cliente AcharTodos() => null;
+            if (umCliente != null)
+            {
+                try
+                {
+                    _contexto.Entry(umCliente).CurrentValues.SetValues(cliente);
+                    _contexto.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return umCliente;
+        }
 
-        public Cliente Atualizar(string id) => null;
-
-        public void DeletarUm(string id) { }
+        public void DeletarUm(string id)
+        {
+           var umCliente = Clientes.FirstOrDefault(c => c.Id.ToString() == id);
+            Clientes.Remove(umCliente);
+            _contexto.SaveChanges();
+        }
     }
 }

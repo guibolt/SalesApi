@@ -7,9 +7,8 @@ namespace Models
    public class Pedido 
     {
         public Cliente Cliente { get; set; }
-        public List<Item> Itens { get; set; }
         public double ValorTotal { get; set; }
-        public DateTime DataDoPedido { get; set; }
+        public DateTime DataDoPedido { get; set; } = DateTime.Now;
         public Guid Id { get; set; } = Guid.NewGuid();
         public bool Finalizado { get; set; }
     }
