@@ -15,7 +15,7 @@ namespace Core
         }
 
 
-        public Cliente Cadastrar(Cliente cliente) => null;
+        public Cliente Cadastrar(Cliente cliente) => cliente;
 
         public Cliente AcharId(string id) => null;
 

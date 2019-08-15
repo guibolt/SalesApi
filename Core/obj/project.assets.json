@@ -702,27 +702,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\guibo\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
+    "C:\\Users\\Treinamento 5\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\guibo\\Desktop\\SalesApi\\Core\\Core.csproj",
+      "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
       "projectName": "Core",
-      "projectPath": "C:\\Users\\guibo\\Desktop\\SalesApi\\Core\\Core.csproj",
-      "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\guibo\\Desktop\\SalesApi\\Core\\obj\\",
+      "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
+      "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
@@ -734,8 +731,8 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "C:\\Users\\guibo\\Desktop\\SalesApi\\Models\\Model.csproj": {
-              "projectPath": "C:\\Users\\guibo\\Desktop\\SalesApi\\Models\\Model.csproj"
+            "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
+              "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj"
             }
           }
         }
