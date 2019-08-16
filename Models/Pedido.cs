@@ -6,6 +6,7 @@ namespace Models
 {
    public class Pedido 
     {
+        // model para o pedido
         public Cliente Cliente { get; set; }
         public double ValorTotal { get; set; }
         public DateTime DataDoPedido { get; set; } = DateTime.Now;

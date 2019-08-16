@@ -9,10 +9,10 @@ namespace ApiForSales
 {
     public class ComprasContext:DbContext
     {
+        // Classe para a conexao com o entity
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
      
-
         public ComprasContext(DbContextOptions<ComprasContext> options)
             : base(options)
         {

@@ -7,6 +7,7 @@ namespace Models
 {
     public class Produto:Base
     {
+        // Model para o produto
       public double Preco { get; set; }
       public int Quantidade { get; set; }
     }
