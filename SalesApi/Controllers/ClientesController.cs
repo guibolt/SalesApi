@@ -20,10 +20,17 @@ namespace ApiForSales.Controllers
         public ClientesController(ComprasContext contexto){    _contexto = contexto; }
         //Método http post para registrar um cliente.
         [HttpPost]
+        [ProducesResponseType((201), Type = typeof(Cliente))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Post([FromBody] Cliente cliente) =>  Created("", new ClienteCore(_contexto).Cadastrar(cliente));
 
         //Método http get para buscar um cliente por id. 
+     
         [HttpGet("{id}")]
+        [ProducesResponseType((201), Type = typeof(Cliente))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public IActionResult Get(string id) => Ok(new ClienteCore(_contexto).AcharId(id));
         //Método http get para listra  um cliente.
         [HttpGet]
@@ -31,10 +38,17 @@ namespace ApiForSales.Controllers
 
         //Método http put para atualizar os dados um cliente. 
         [HttpPut("{att}")]
+        [ProducesResponseType((202), Type = typeof(Cliente))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Put([FromBody]Cliente cliente) => Ok(new ClienteCore(_contexto).Atualizar(cliente));
 
         // Método http delete para deletar um cliente.
+
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Delete(string id)
         {
             new ClienteCore(_contexto).DeletarUm(id);
