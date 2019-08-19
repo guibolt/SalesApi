@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Core;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -14,29 +10,29 @@ namespace ApiForSales.Controllers
     public class ProdutosController : ControllerBase
     {
 
-        private ComprasContext _contexto { get; set; }
-        public ProdutosController(ComprasContext contexto)
-        {
-            _contexto = contexto;
-        }
+       
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Produto produto) => Created("", new ProdutoCore(_contexto).Cadastrar(produto));
-
+        public async Task<IActionResult> Post([FromBody] Produto produto)
+        {
+            var Core = new ProdutoCore(produto).CadastrarProduto();
+            return Core.Status ? Created($"https://localhost/api/Eleitores/{produto.Id}", Core.Resultado) : BadRequest("Esse cadastro já existe.");
+        }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id) => Ok(new ProdutoCore(_contexto).AcharId(id));
+        public async Task<IActionResult> Get(string id)
+        {
+            var Core = new ProdutoCore().AcharUm(id);
+            return Core.Status ? Ok(Core.Resultado) : BadRequest("Esse cadastro não existe!");
+        }
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok(new ProdutoCore(_contexto).AcharTodos());
+        public async Task<IActionResult> Get() => Ok(new ProdutoCore().AcharTodos().Resultado);
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody]Produto produto ) => Ok(new ProdutoCore(_contexto).Atualizar(produto));
+        public async Task<IActionResult> Put([FromBody]Produto produto, string id) => Ok(new ProdutoCore().AtualizarUm(id, produto).Resultado);
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            new ProdutoCore(_contexto).DeletarUm(id);
-            return NoContent();
-        }
+        public async Task<IActionResult> Delete(string id) => Accepted(new ProdutoCore().DeletarId(id));
+        
     }
 }

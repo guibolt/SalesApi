@@ -1,59 +1,121 @@
-﻿
-using ApiForSales;
-using Microsoft.EntityFrameworkCore;
+﻿using Core.Util;
+using FluentValidation;
+using Model;
 using Models;
 using System.Linq;
-using System;
-using System.Collections.Generic;
 
 namespace Core
 {
-    public class ProdutoCore
+    public class ProdutoCore : AbstractValidator<Produto>
     {
+        private Produto _produto;
 
-        private ComprasContext _contexto { get; set; }
-        private DbSet<Produto> Produtos { get; set; }
-        public ProdutoCore(ComprasContext contexto)
-        {
-            _contexto = contexto;
-            Produtos = contexto.Set<Produto>();
-        }
-        public Produto Cadastrar(Produto produto)
-        {
-            Produtos.Add(produto);
-            _contexto.SaveChanges();
-            return produto;
-        }
-       
-        public Produto AcharId(string id) => Produtos.FirstOrDefault(c => c.Id.ToString() == id);
-        public List<Produto>AcharTodos() => Produtos.ToList();
+        public ProdutoCore(){}
 
-        public Produto Atualizar(Produto produto)
+        public ProdutoCore(Produto produto)
         {
-            var umProduto = Produtos.FirstOrDefault(c => c.Id == produto.Id);
+            _produto = produto;
 
-            if (umProduto != null)
-            {
-                try
-                {
-                    _contexto.Entry(umProduto).CurrentValues.SetValues(produto);
-                    _contexto.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            return umProduto;
+            RuleFor(p => p.Nome).MinimumLength(3).
+                WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
+
+            RuleFor(p => p.Preco).GreaterThan(0).WithMessage("O preço precisa ser maior que 0 e nao pdoe ser nulo");
+
+   
         }
 
-        public void DeletarUm(string id)
+        public Retorno CadastrarProduto()
         {
-            var umProduto = Produtos.FirstOrDefault(c => c.Id.ToString() == id);
-            Produtos.Remove(umProduto);
-            _contexto.SaveChanges();
+            var valida = Validate(_produto);
+
+            if (!valida.IsValid)
+                return new Retorno { Status = false, Resultado = valida.Errors };
+
+            var db = Arq.ManipulacaoDeArquivos(true, null);
+
+            if (db.sistema == null)
+                db.sistema = new Sistema();
+
+            var produtos = db.sistema.Produtos;
+
+            if (produtos.Any(c => c.Nome == _produto.Nome))
+                return new Retorno() { Status = false, Resultado = null };
+
+            db.sistema.Produtos.Add(_produto);
+            Arq.ManipulacaoDeArquivos(false, db.sistema);
+
+            return new Retorno() { Status = true, Resultado = _produto };
         }
 
+        public Retorno AcharUm(string id)
+        {
+            var db = Arq.ManipulacaoDeArquivos(true, null);
+            if (db.sistema == null)
+                db.sistema = new Sistema();
+
+            if (!db.sistema.Produtos.Exists(e => e.Id == id))
+                return new Retorno() { Status = false, Resultado = null };
+
+            var Umproduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
+            return new Retorno() { Status = true, Resultado = Umproduto };
+        }
+
+
+        public Retorno AcharTodos()
+        {
+            var db = Arq.ManipulacaoDeArquivos(true, null);
+            if (db.sistema == null)
+                db.sistema = new Sistema();
+
+            return new Retorno() { Status = true, Resultado = db.sistema.Produtos };
+
+        }
+
+
+        public Retorno DeletarId(string id)
+        {
+            var db = Arq.ManipulacaoDeArquivos(true, null);
+            if (db.sistema == null)
+                db.sistema = new Sistema();
+
+            var UmProduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
+
+            db.sistema.Produtos.Remove(UmProduto);
+
+            Arq.ManipulacaoDeArquivos(false, db.sistema);
+
+            return new Retorno { Status = true, Resultado = null };
+
+        }
+
+        public Retorno AtualizarUm(string id, Produto produto)
+        {
+
+            var db = Arq.ManipulacaoDeArquivos(true, null);
+            if (db.sistema == null)
+                db.sistema = new Sistema();
+
+            var umProduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
+            db.sistema.Produtos.Remove(umProduto);
+
+            if (produto.Nome != null)
+                umProduto.Nome = produto.Nome;
+
+            if (produto.Preco != 0)
+                umProduto.Preco = produto.Preco;
+
+            if (produto.Quantidade != 0)
+                umProduto.Quantidade = produto.Quantidade;
+
+            if (produto.Id != null)
+                umProduto.Id = produto.Id;
+
+            db.sistema.Produtos.Add(umProduto);
+
+            Arq.ManipulacaoDeArquivos(false, db.sistema);
+
+            return new Retorno() { Status = true, Resultado = umProduto };
+        }
 
     }
 }

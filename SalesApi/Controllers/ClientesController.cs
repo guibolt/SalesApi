@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Core;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -13,30 +9,30 @@ namespace ApiForSales.Controllers
     [ApiController]
     public class ClientesController : ControllerBase
     {
-        private ComprasContext _contexto { get; set; }
-        public ClientesController(ComprasContext contexto)
-        {
-            _contexto = contexto;
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Cliente cliente) =>  Created("", new ClienteCore(_contexto).Cadastrar(cliente));
 
+       
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Cliente cliente)
+        {
+            var Core = new ClienteCore(cliente).CadastrarProduto();
+            return Core.Status ? Created($"https://localhost/api/Eleitores/{cliente.Id}", Core.Resultado) : BadRequest("Esse cadastro já existe.");
+        }
 
         [HttpGet("{id}")]
-        public IActionResult Get(string id) => Ok(new ClienteCore(_contexto).AcharId(id));
+        public async Task<IActionResult> Get(string id)
+        {
+            var Core = new ClienteCore().AcharUm(id);
+            return Core.Status ? Ok(Core.Resultado) : BadRequest("Esse cadastro não existe!");
+        }
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok(new ClienteCore(_contexto).AcharTodos());
+        public async Task<IActionResult> Get() => Ok(new ClienteCore().AcharTodos().Resultado);
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody]Cliente cliente) => Ok(new ClienteCore(_contexto).Atualizar(cliente));
-
+        public async Task<IActionResult> Put([FromBody]Cliente cliente, string id) => Ok(new ClienteCore().AtualizarUm(id, cliente).Resultado);
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            new ClienteCore(_contexto).DeletarUm(id);
-            return NoContent();
-        }
+        public async Task<IActionResult> Delete(string id) => Accepted(new ClienteCore().DeletarId(id));
+        
     }
 }
