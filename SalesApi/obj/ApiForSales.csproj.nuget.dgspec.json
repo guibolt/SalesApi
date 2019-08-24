@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\SalesApi\\ApiForSales.csproj": {}
+    "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\SalesApi\\ApiForSales.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj": {
+    "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\obj\\",
+        "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
@@ -30,8 +32,8 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
-                "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj"
+              "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj": {
+                "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj"
               }
             }
           }
@@ -64,21 +66,23 @@
         }
       }
     },
-    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
+    "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj",
+        "projectUniqueName": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj",
         "projectName": "Model",
-        "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj",
-        "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\obj\\",
+        "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj",
+        "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
@@ -120,21 +124,23 @@
         }
       }
     },
-    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\SalesApi\\ApiForSales.csproj": {
+    "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\SalesApi\\ApiForSales.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\SalesApi\\ApiForSales.csproj",
+        "projectUniqueName": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\SalesApi\\ApiForSales.csproj",
         "projectName": "ApiForSales",
-        "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\SalesApi\\ApiForSales.csproj",
-        "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\SalesApi\\obj\\",
+        "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\SalesApi\\ApiForSales.csproj",
+        "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\SalesApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
@@ -146,11 +152,11 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj"
+              "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Core\\Core.csproj"
               },
-              "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
-                "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj"
+              "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj": {
+                "projectPath": "C:\\Users\\guibo\\Desktop\\ApiSales\\SalesApi\\Models\\Model.csproj"
               }
             }
           }
@@ -188,6 +194,10 @@
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[4.0.1, )"
             }
           },
           "imports": [

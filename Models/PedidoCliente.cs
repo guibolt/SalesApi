@@ -6,6 +6,7 @@ namespace Models
 {
         public   class PedidoCliente
     {
+        // Classe para amarrar o cliente ao pedido
         public int ClienteId { get; set; }
         public int PedidoId { get; set; }
         public Pedido Pedido { get; set; }

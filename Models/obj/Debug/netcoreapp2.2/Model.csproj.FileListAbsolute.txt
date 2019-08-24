@@ -16,3 +16,12 @@ C:\Users\Treinamento 5\Desktop\SalesApi\SalesApi\Models\obj\Debug\netcoreapp2.2\
 C:\Users\Treinamento 5\Desktop\SalesApi\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.AssemblyInfo.cs
 C:\Users\Treinamento 5\Desktop\SalesApi\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.dll
 C:\Users\Treinamento 5\Desktop\SalesApi\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.pdb
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\bin\Debug\netcoreapp2.2\Model.deps.json
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\bin\Debug\netcoreapp2.2\Model.dll
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\bin\Debug\netcoreapp2.2\Model.pdb
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.csprojAssemblyReference.cache
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.csproj.CoreCompileInputs.cache
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.AssemblyInfoInputs.cache
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.AssemblyInfo.cs
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.dll
+C:\Users\guibo\Desktop\ApiSales\SalesApi\Models\obj\Debug\netcoreapp2.2\Model.pdb

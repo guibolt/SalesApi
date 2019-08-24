@@ -5,25 +5,34 @@ using Models;
 using System.Linq;
 
 namespace Core
-{
+{  // Classe contendo as regras de negocio
     public class ProdutoCore : AbstractValidator<Produto>
     {
         private Produto _produto;
 
-        public ProdutoCore(){}
+        public Sistema db { get; set; }
 
+        // Construtor sem argumento inicando a base dados
+        public ProdutoCore()
+        {
+            db = Arq.ManipulacaoDeArquivos(true, null).sistema;
+
+            if (db == null) db = new Sistema();
+
+        }
+        // Construtor com a validação
         public ProdutoCore(Produto produto)
         {
+            if (db == null) db = new Sistema();
             _produto = produto;
 
             RuleFor(p => p.Nome).MinimumLength(3).
                 WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
 
             RuleFor(p => p.Preco).GreaterThan(0).WithMessage("O preço precisa ser maior que 0 e nao pdoe ser nulo");
-
-   
         }
 
+        // Método para cadastar um produto
         public Retorno CadastrarProduto()
         {
             var valida = Validate(_produto);
@@ -31,72 +40,55 @@ namespace Core
             if (!valida.IsValid)
                 return new Retorno { Status = false, Resultado = valida.Errors };
 
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            var produtos = db.sistema.Produtos;
+           
+            var produtos = db.Produtos;
 
             if (produtos.Any(c => c.Nome == _produto.Nome))
                 return new Retorno() { Status = false, Resultado = null };
 
-            db.sistema.Produtos.Add(_produto);
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
+            db.Produtos.Add(_produto);
+            Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno() { Status = true, Resultado = _produto };
         }
-
+        // Método para retornar um produto
         public Retorno AcharUm(string id)
         {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            if (!db.sistema.Produtos.Exists(e => e.Id == id))
+  
+            if (!db.Produtos.Exists(e => e.Id == id))
                 return new Retorno() { Status = false, Resultado = null };
 
-            var Umproduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
+            var Umproduto = db.Produtos.Find(c => c.Id.ToString() == id);
             return new Retorno() { Status = true, Resultado = Umproduto };
         }
+        // método para retornar todos os produtos registrados.
+        public Retorno AcharTodos() => new Retorno() { Status = true, Resultado = db.Produtos.OrderBy(n => n.Nome) };
 
-
-        public Retorno AcharTodos()
-        {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            return new Retorno() { Status = true, Resultado = db.sistema.Produtos };
-
-        }
-
-
+        // Método para deletar por id
         public Retorno DeletarId(string id)
         {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
+      
+            if (!db.Produtos.Exists(e => e.Id == id))
+                return new Retorno() { Status = false, Resultado = null };
 
-            var UmProduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
+            var UmProduto = db.Produtos.Find(c => c.Id.ToString() == id);
 
-            db.sistema.Produtos.Remove(UmProduto);
+            db.Produtos.Remove(UmProduto);
 
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
+            Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno { Status = true, Resultado = null };
 
         }
 
+        // Método para atualizar por id
         public Retorno AtualizarUm(string id, Produto produto)
         {
+            if (!db.Produtos.Exists(e => e.Id == id))
+                return new Retorno() { Status = false, Resultado = null };
 
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            var umProduto = db.sistema.Produtos.Find(c => c.Id.ToString() == id);
-            db.sistema.Produtos.Remove(umProduto);
+            var umProduto = db.Produtos.Find(c => c.Id.ToString() == id);
+         
 
             if (produto.Nome != null)
                 umProduto.Nome = produto.Nome;
@@ -110,9 +102,7 @@ namespace Core
             if (produto.Id != null)
                 umProduto.Id = produto.Id;
 
-            db.sistema.Produtos.Add(umProduto);
-
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
+            Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno() { Status = true, Resultado = umProduto };
         }
