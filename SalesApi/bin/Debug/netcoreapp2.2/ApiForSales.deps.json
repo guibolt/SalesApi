@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "7b8fec5928497b215e4d13ec68b155976693efc1"
+    "signature": "8412764f272590fdaea3bf92f955d9e85d64d4fa"
   },
   "compilationOptions": {
     "defines": [
@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v2.2": {
       "ApiForSales/1.0.0": {
         "dependencies": {
+          "AutoMapper": "9.0.0",
           "Core": "1.0.0",
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
@@ -38,6 +39,21 @@
         },
         "compile": {
           "ApiForSales.dll": {}
+        }
+      },
+      "AutoMapper/9.0.0": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.5.0",
+          "System.Reflection.Emit": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AutoMapper.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/AutoMapper.dll": {}
         }
       },
       "FluentValidation/8.4.0": {
@@ -500,6 +516,7 @@
       },
       "Core/1.0.0": {
         "dependencies": {
+          "AutoMapper": "9.0.0",
           "FluentValidation.AspNetCore": "8.4.0",
           "Model": "1.0.0"
         },
@@ -3722,6 +3739,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AutoMapper/9.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xCqvoxT4HIrNY/xlXG9W+BA/awdrhWvMTKTK/igkGSRbhOhpl3Q8O8Gxlhzjc9JsYqE7sS6AxgyuUUvZ6R5/Bw==",
+      "path": "automapper/9.0.0",
+      "hashPath": "automapper.9.0.0.nupkg.sha512"
     },
     "FluentValidation/8.4.0": {
       "type": "package",

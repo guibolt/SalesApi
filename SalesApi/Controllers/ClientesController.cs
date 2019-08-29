@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Core;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using Model;
 
 namespace ApiForSales.Controllers
 {
@@ -15,14 +15,14 @@ namespace ApiForSales.Controllers
         public async Task<IActionResult> Post([FromBody] Cliente cliente)
         {
             var Core = new ClienteCore(cliente).CadastrarProduto();
-            return Core.Status ? Created($"https://localhost/api/Eleitores/{cliente.Id}", Core.Resultado) : BadRequest("Esse cadastro já existe.");
+            return Core.Status ? Created($"https://localhost/api/Eleitores/{cliente.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
             var Core = new ClienteCore().AcharUm(id);
-            return Core.Status ? Ok(Core.Resultado) : BadRequest("Esse cadastro não existe!");
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
 
         [HttpGet]

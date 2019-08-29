@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Core;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using Model;
 
 namespace ApiForSales.Controllers
 {

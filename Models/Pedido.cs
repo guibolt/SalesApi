@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Models
+namespace Model
 {
-   public class Pedido 
+    public class Pedido 
     {
+        public List<Produto> Produtos { get; set; } = new List<Produto>();
         public Cliente Cliente { get; set; }
-        public double ValorTotal { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 6);
         public DateTime DataDoPedido { get; set; } = DateTime.Now;
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public bool Finalizado { get; set; }
+        public double ValorTotal { get; set; }
+
+        public void CalculaTotal()
+        {
+            Produtos.ForEach(c => ValorTotal += c.SubTotal());
+            
+            if (ValorTotal > 300)
+                ValorTotal -= ValorTotal * 0.10;
+            else if (ValorTotal > 100)
+                ValorTotal -= ValorTotal * 0.05;
+        }
+
+     
     }
 }

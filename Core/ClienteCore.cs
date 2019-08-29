@@ -1,7 +1,6 @@
 ﻿using Core.Util;
 using FluentValidation;
 using Model;
-using Models;
 using System.Linq;
 
 namespace Core
@@ -9,12 +8,22 @@ namespace Core
     public class ClienteCore : AbstractValidator<Cliente>
     {
         private Cliente _cliente;
+        private Sistema db;
+        public ClienteCore()
+        {
+            db = Arq.ManipulacaoDeArquivos(true, null).sistema;
 
-        public ClienteCore(){}
+            if (db == null)  db = new Sistema();
+        }
 
         public ClienteCore(Cliente Cliente) {
-            _cliente = Cliente;
 
+            db = Arq.ManipulacaoDeArquivos(true, null).sistema;
+
+            if (db == null) db = new Sistema();
+        
+
+          _cliente = Cliente;
             RuleFor(c => c.Idade).GreaterThan(6).WithMessage("A idade do cliente deve ser maior que 6");
             RuleFor(c => c.Nome).MinimumLength(3).NotNull().WithMessage("O nome deve conter mais que 2 caracteres");
             RuleFor(c => c.Documento).Length(11, 11).NotNull().WithMessage("Cpf inválido");
@@ -27,71 +36,44 @@ namespace Core
             var valida = Validate(_cliente);
 
             if (!valida.IsValid)
-                return new Retorno { Status = false, Resultado = valida.Errors };
+                return new Retorno { Status = false, Resultado = valida.Errors.Select(c => c.ErrorMessage).ToList() };
 
-            var db = Arq.ManipulacaoDeArquivos(true, null);
+            if (db.Clientes.Any(c => c.Nome == _cliente.Nome) || db.Clientes.Any(c => c.Documento == _cliente.Documento))
+                return new Retorno() { Status = false, Resultado = "Cliente já registrado" };
 
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            var clientes = db.sistema.Clientes;
-
-            if (clientes.Any(c => c.Nome == _cliente.Nome))
-                return new Retorno() { Status = false, Resultado = null };
-
-            db.sistema.Clientes.Add(_cliente);
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
+            db.Clientes.Add(_cliente);
+            Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno() { Status = true, Resultado = _cliente };
         }
 
         public Retorno AcharUm(string id)
         {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
+            if (!db.Clientes.Exists(e => e.Id.ToString() == id))
+                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            if (!db.sistema.Clientes.Exists(e => e.Id.ToString() == id))
-                return new Retorno() { Status = false, Resultado = null };
-
-            var umCliente = db.sistema.Clientes.Find(c => c.Id == id);
+            var umCliente = db.Clientes.Find(c => c.Id == id);
             return new Retorno() { Status = true, Resultado = umCliente };
         }
 
-        public Retorno AcharTodos()
-        {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
+        public Retorno AcharTodos() =>  new Retorno() { Status = true, Resultado = db.Clientes };
 
-            return new Retorno() { Status = true, Resultado = db.sistema.Clientes };
-
-        }
+        
         public Retorno DeletarId(string id)
         {
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
+            db.Clientes.Remove(db.Clientes.Find(c => c.Id.ToString() == id));
 
-            var UmCliente= db.sistema.Clientes.Find(c => c.Id.ToString() == id);
+            Arq.ManipulacaoDeArquivos(false, db);
 
-            db.sistema.Clientes.Remove(UmCliente);
-
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
-
-            return new Retorno { Status = true, Resultado = null };
+            return new Retorno { Status = true, Resultado = "Registro deletado!" };
 
         }
 
         public Retorno AtualizarUm(string id, Cliente cliente)
         {
 
-            var db = Arq.ManipulacaoDeArquivos(true, null);
-            if (db.sistema == null)
-                db.sistema = new Sistema();
-
-            var umCliente = db.sistema.Clientes.Find(c => c.Id == id);
-            db.sistema.Clientes.Remove(umCliente);
+            var umCliente = db.Clientes.Find(c => c.Id == id);
+            db.Clientes.Remove(umCliente);
 
             if (cliente.Documento != null)
                 umCliente.Documento = cliente.Documento;
@@ -105,9 +87,9 @@ namespace Core
             if (cliente.Nome != null)
                  umCliente.Nome = cliente.Nome;
 
-            db.sistema.Clientes.Add(umCliente);
+            db.Clientes.Add(umCliente);
 
-            Arq.ManipulacaoDeArquivos(false, db.sistema);
+            Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno() { Status = true, Resultado = umCliente };
         }

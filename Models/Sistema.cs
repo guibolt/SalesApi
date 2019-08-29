@@ -1,13 +1,11 @@
-﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Model
 {
     public class Sistema
     {
         public List<Produto> Produtos { get; set; } = new List<Produto>();
+        public List<Pedido> Pedidos { get; set; } = new List<Pedido>();
         public List<Cliente> Clientes { get; set; } = new List<Cliente>();
         public Sistema() { }
     }
