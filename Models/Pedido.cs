@@ -18,7 +18,6 @@ namespace Model
         public void CalculaTotal()
         {
             Produtos.ForEach(c => ValorTotal += c.SubTotal());
-            
             if (ValorTotal > 300)
                 ValorTotal -= ValorTotal * 0.10;
             else if (ValorTotal > 100)

@@ -13,21 +13,22 @@ namespace Core
 
         public PedidoCore()
         {
-          
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             if (db == null) db = new Sistema();
         }
 
         public PedidoCore(Pedido pedido)
         {
-  
+            db = Arq.ManipulacaoDeArquivos(true, null).sistema;
+            if (db == null) db = new Sistema();
+
             _pedido = pedido;
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
             RuleFor(c => c.Produtos).Must(produto => ValidaProduto()).WithMessage("O produto está inválido.");
 
-            db = Arq.ManipulacaoDeArquivos(true, null).sistema;
-            if (db == null) db = new Sistema();
+            _pedido.Produtos.ForEach(c => c.TrocandoDados(db.Produtos.FirstOrDefault(e => e.Id == c.Id)));
+            _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
         }
 
         public Retorno RealizarPedido()
@@ -41,12 +42,9 @@ namespace Core
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
-            // Remove todos os produtos com quantidade inválida.
-            db.Produtos.RemoveAll(p => p.Quantidade == 0);
+            // para movimentar o estoque.
+            _pedido.Produtos.ForEach(d => db.Produtos.FirstOrDefault(c => c.Id == d.Id).Quantidade -= d.Quantidade);
 
-            //Movimenta o estoque
-            ModificaEstoque();
-       
             //calcula o total e adciona na lista
             _pedido.CalculaTotal();
             db.Pedidos.Add(_pedido);
@@ -111,25 +109,15 @@ namespace Core
             return new Retorno() { Status = false, Resultado = "Dados inválidos, nao foi possivel realizar a paginação." };
         }
 
-        // metodo para validar os produtos inseridos
+        // método para validar os produtos inseridos
         public bool ValidaProduto()
         {
             foreach (var produto in _pedido.Produtos)
             {
-                if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade)
+                if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade )
                     return false;
             }
             return true;
-        }
-
-        //Método para movimentar o estoque.
-        public void ModificaEstoque()
-        {
-            foreach (var produto in _pedido.Produtos)
-            {
-                var outroProduto = db.Produtos.FirstOrDefault(c => c.Id == produto.Id);
-                outroProduto.Quantidade -= produto.Quantidade;  
-            }
         }
     }
 }
