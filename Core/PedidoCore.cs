@@ -2,6 +2,7 @@
 using FluentValidation;
 using Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -26,6 +27,8 @@ namespace Core
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
             RuleFor(c => c.Produtos).Must(produto => ValidaProduto()).WithMessage("O produto está inválido.");
+
+            RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0);
 
             _pedido.Produtos.ForEach(c => c.TrocandoDados(db.Produtos.FirstOrDefault(e => e.Id == c.Id)));
             _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
@@ -106,7 +109,7 @@ namespace Core
                 return new Retorno() { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // se nao der pra fazer a paginação
-            return new Retorno() { Status = false, Resultado = "Dados inválidos, nao foi possivel realizar a paginação." };
+            return new Retorno() { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
         }
 
         // método para validar os produtos inseridos

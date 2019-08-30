@@ -1,6 +1,7 @@
 ﻿using Core.Util;
 using FluentValidation;
 using Model;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -30,6 +31,7 @@ namespace Core
             RuleFor(p => p.Nome).MinimumLength(3).
                 WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
             RuleFor(p => p.Preco).GreaterThan(0).NotEmpty().WithMessage("O preço precisa ser maior que 0 e nao pdoe ser vazio");
+            RuleFor(p => p.Quantidade).NotEmpty().GreaterThan(0).WithMessage("A quantidade do produto deve ser de no minimo um produto");
         }
 
         //Método para cadastrar um produto
@@ -86,7 +88,7 @@ namespace Core
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORPRECO")
                 return new Retorno() { Status = true, Resultado = db.Produtos.OrderByDescending(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
             // se nao der pra fazer a paginação
-            return new Retorno() { Status = false, Resultado = "Dados inválidos, nao foi possivel realizar a paginação." };
+            return new Retorno() { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
         }
 
         // Método para atualizar por id
@@ -105,7 +107,6 @@ namespace Core
 
             if (produto.Quantidade != 0)
                 umProduto.Quantidade = produto.Quantidade;
-
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno() { Status = true, Resultado = umProduto };

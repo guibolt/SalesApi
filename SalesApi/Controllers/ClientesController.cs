@@ -26,6 +26,7 @@ namespace ApiForSales.Controllers
         {
             var Core = new ClienteCore().PorPaginacao(Ordem, numerodePaginas, qtdRegistros);
             // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
+
             if (Core.Resultado.Count == 0)
                 return BadRequest("Essa pagina não existe!");
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
