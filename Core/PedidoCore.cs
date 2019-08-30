@@ -1,6 +1,7 @@
 ﻿using Core.Util;
 using FluentValidation;
 using Model;
+using System;
 using System.Linq;
 
 namespace Core
@@ -8,21 +9,22 @@ namespace Core
     public class PedidoCore: AbstractValidator<Pedido>
     {
         private Pedido _pedido;
-        private Sistema db;
+        public Sistema db { get; set; }
 
         public PedidoCore()
         {
+          
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             if (db == null) db = new Sistema();
         }
 
         public PedidoCore(Pedido pedido)
         {
+  
             _pedido = pedido;
-
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
-            RuleFor(c => c.Produtos).Must(temp => ValidaProduto()).WithMessage("O produto está inválido.");
+            RuleFor(c => c.Produtos).Must(produto => ValidaProduto()).WithMessage("O produto está inválido.");
 
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             if (db == null) db = new Sistema();
@@ -36,10 +38,15 @@ namespace Core
                 return new Retorno { Status = false, Resultado =  valida.Errors.Select(c => c.ErrorMessage).ToList() };
 
             // checa se o cliente realmente existe na base
-           
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
+            // Remove todos os produtos com quantidade inválida.
+            db.Produtos.RemoveAll(p => p.Quantidade == 0);
+
+            //Movimenta o estoque
+            ModificaEstoque();
+       
             //calcula o total e adciona na lista
             _pedido.CalculaTotal();
             db.Pedidos.Add(_pedido);
@@ -49,6 +56,7 @@ namespace Core
         }
         public Retorno AcharTodos() => new Retorno() { Status = true, Resultado = db.Pedidos };
 
+        // Método para returnar um registro
         public Retorno AcharUm(string id)
         {
             if (!db.Pedidos.Any(e => e.Id == id))
@@ -57,6 +65,7 @@ namespace Core
             return new Retorno() { Status = true, Resultado = db.Pedidos.Find(c => c.Id.ToString() == id) };
         }
 
+        //Método para deletar por id
         public Retorno DeletarId(string id)
         {
             if (!db.Pedidos.Any(e => e.Id == id))
@@ -67,7 +76,41 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = "Registro removido!" };
         }
-    
+        public Retorno BuscaPorData(string dataComeço, string dataFim)
+        {
+            // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
+            if (!DateTime.TryParse(dataComeço, out DateTime primeiraData) && !DateTime.TryParse(dataFim, out DateTime segundaData))
+                return new Retorno() { Status = false, Resultado = "Dados Invalidos" };
+
+            // Tento fazer a conversao da segunda data for invalida faço somente a pesquisa da primeira data
+            if (!DateTime.TryParse(dataFim, out segundaData))
+                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido >= primeiraData).ToList() };
+
+            // Tento fazer a conversao da primeiradata for invalida faço somente a pesquisa da segunda data
+            if (!DateTime.TryParse(dataComeço, out primeiraData))
+                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido <= segundaData).ToList() };
+
+            // returno a lista completa entre as duas datas informadas.
+            return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido >= primeiraData && c.DataDoPedido <= segundaData).ToList() };
+        }
+        public Retorno PorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
+        {
+            // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
+            if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
+                return new Retorno() { Status = true, Resultado = db.Pedidos.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+
+            // faço a verificação e depois ordeno por nome. 
+            if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MENORVALOR")
+                return new Retorno() { Status = true, Resultado = db.Pedidos.OrderBy(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+
+            // faço a verificação e depois ordeno por idade. 
+            if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORVALOR")
+                return new Retorno() { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+
+            // se nao der pra fazer a paginação
+            return new Retorno() { Status = false, Resultado = "Dados inválidos, nao foi possivel realizar a paginação." };
+        }
+
         // metodo para validar os produtos inseridos
         public bool ValidaProduto()
         {
@@ -76,8 +119,17 @@ namespace Core
                 if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade)
                     return false;
             }
-
             return true;
+        }
+
+        //Método para movimentar o estoque.
+        public void ModificaEstoque()
+        {
+            foreach (var produto in _pedido.Produtos)
+            {
+                var outroProduto = db.Produtos.FirstOrDefault(c => c.Id == produto.Id);
+                outroProduto.Quantidade -= produto.Quantidade;  
+            }
         }
     }
 }

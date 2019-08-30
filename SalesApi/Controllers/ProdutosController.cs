@@ -9,30 +9,48 @@ namespace ApiForSales.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
+        [HttpGet]
+        // método get para buscar todos
+        public async Task<IActionResult> Get() => Ok(new ProdutoCore().AcharTodos().Resultado);
 
-       // Método post para cadastro
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Produto produto)
-        {
-            var Core = new ProdutoCore(produto).CadastrarProduto();
-            return Core.Status ? Created($"https://localhost/api/Eleitores/{produto.Id}", Core.Resultado) : BadRequest("Esse cadastro já existe.");
-        }
         // método get para buscar por id
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
             var Core = new ProdutoCore().AcharUm(id);
-            return Core.Status ? Ok(Core.Resultado) : BadRequest("Esse cadastro não existe!");
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
-        // método get para buscar todos
-        [HttpGet]
-        public async Task<IActionResult> Get() => Ok(new ProdutoCore().AcharTodos().Resultado);
+       
+        [HttpGet("Paginas")]
+        public async Task<IActionResult> PorPagina([FromQuery]string Ordem, [FromQuery] int numerodePaginas, [FromQuery]int qtdRegistros)
+        {
+            var Core = new ProdutoCore().PorPaginacao(Ordem, numerodePaginas, qtdRegistros);
+            // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
+            if (Core.Resultado.Count == 0)
+                return BadRequest("Essa pagina não existe!");
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
+        }
+
+        // Método post para cadastro
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Produto produto)
+        {
+            var Core = new ProdutoCore(produto).CadastrarProduto();
+            return Core.Status ? Created($"https://localhost/api/Produtos/{produto.Id}", Core.Resultado) : BadRequest(Core.Resultado);
+        }
         // método put para atualizar um produto
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody]Produto produto, string id) => Ok(new ProdutoCore().AtualizarUm(id, produto).Resultado);
+        public async Task<IActionResult> Put([FromBody]Produto produto, string id)
+        {
+            var Core = new ProdutoCore().AtualizarUm(id, produto);
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
+        }
         // método para deletar por id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id) => Accepted(new ProdutoCore().DeletarId(id));
-        
+        public async Task<IActionResult> Delete(string id)
+        {
+            var Core = new ProdutoCore().DeletarId(id);
+            return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
+        }
     }
 }
