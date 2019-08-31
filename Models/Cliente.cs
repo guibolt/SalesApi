@@ -17,7 +17,7 @@ namespace Model
             Idade = cliente.Idade;
             Documento = cliente.Documento;
             Sexo = cliente.Sexo;
-            Nome = cliente.Sexo;
+            Nome = cliente.Nome;
             DataCadastro = cliente.DataCadastro;
         }
     } 
