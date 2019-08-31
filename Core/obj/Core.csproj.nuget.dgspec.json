@@ -1,26 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Core\\Core.csproj": {}
+    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Core\\Core.csproj": {
+    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Core\\obj\\",
+        "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
@@ -32,8 +30,8 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\Model.csproj": {
-                "projectPath": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\Model.csproj"
+              "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
+                "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj"
               }
             }
           }
@@ -70,23 +68,21 @@
         }
       }
     },
-    "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\Model.csproj": {
+    "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\Model.csproj",
+        "projectUniqueName": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj",
         "projectName": "Model",
-        "projectPath": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\Model.csproj",
-        "packagesPath": "C:\\Users\\guibo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\guibo\\Desktop\\Salesaapp\\SalesApi\\Models\\obj\\",
+        "projectPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\Model.csproj",
+        "packagesPath": "C:\\Users\\Treinamento 5\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Treinamento 5\\Desktop\\SalesApi\\SalesApi\\Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\guibo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Treinamento 5\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"

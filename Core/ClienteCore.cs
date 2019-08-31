@@ -42,27 +42,29 @@ namespace Core
                 return new Retorno { Status = false, Resultado = valida.Errors.Select(c => c.ErrorMessage).ToList() };
 
             if (db.Clientes.Any(c => c.Nome == _cliente.Nome) || db.Clientes.Any(c => c.Documento == _cliente.Documento))
-                return new Retorno() { Status = false, Resultado = "Cliente já registrado" };
+                return new Retorno { Status = false, Resultado = "Cliente já registrado" };
 
                
             db.Clientes.Add(_cliente);
             Arq.ManipulacaoDeArquivos(false, db);
 
-            return new Retorno() { Status = true, Resultado = _cliente };
+            return new Retorno { Status = true, Resultado = _cliente };
         }
         // Método para retornar um cliente
-        public Retorno AcharUm(string id)
+        public Retorno BuscarCliente(string id)
         {
-            if (!db.Clientes.Any(e => e.Id.ToString() == id))
+            var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
+            if (umCliente == null)
                 return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            return new Retorno() { Status = true, Resultado = db.Clientes.Find(c => c.Id == id) };
+            return new Retorno { Status = true, Resultado = umCliente};
         }
         // método para retornar todos os clientes registrados.
-        public Retorno AcharTodos() =>  new Retorno() { Status = true, Resultado = db.Clientes.OrderBy(n => n.Nome) };
-        public Retorno DeletarId(string id)
+        public Retorno BuscarTodos() =>  new Retorno { Status = true, Resultado = db.Clientes.OrderBy(n => n.Nome) };
+        public Retorno DeletarPorId(string id)
         {
-            if (!db.Clientes.Any(e => e.Id.ToString() == id))
+            var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
+            if (umCliente == null)
                 return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Clientes.Remove(db.Clientes.Find(c => c.Id.ToString() == id));
@@ -71,12 +73,11 @@ namespace Core
             return new Retorno { Status = true, Resultado = "Registro deletado!" };
         }
         // Método para atualizar por id
-        public Retorno AtualizarUm(string id, Cliente cliente)
+        public Retorno AtualizarCliente(string id, Cliente cliente)
         {
-            if (!db.Clientes.Any(e => e.Id.ToString() == id))
+            var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
+            if (umCliente == null)
                 return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
-
-            var umCliente = db.Clientes.Find(c => c.Id == id);
 
             if (cliente.Documento != null)
                 umCliente.Documento = cliente.Documento;
@@ -91,10 +92,10 @@ namespace Core
                 umCliente.Idade = cliente.Idade;
 
             Arq.ManipulacaoDeArquivos(false, db);
-            return new Retorno() { Status = true, Resultado = umCliente };
+            return new Retorno { Status = true, Resultado = umCliente };
         }
         // método para buscar por data
-        public Retorno BuscaPorData(string dataComeço, string dataFim)
+        public Retorno BuscaClientePorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
             if (!DateTime.TryParse(dataComeço, out DateTime primeiraData) && !DateTime.TryParse(dataFim, out DateTime segundaData))
@@ -111,7 +112,7 @@ namespace Core
             // returno a lista completa entre as duas datas informadas.
             return new Retorno { Status = true, Resultado = db.Clientes.Where(c => c.DataCadastro >= primeiraData && c.DataCadastro <= segundaData).ToList() };
         }
-        public Retorno PorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
+        public Retorno RetornaClentePorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
@@ -126,7 +127,7 @@ namespace Core
                 return new Retorno() { Status = true, Resultado = db.Clientes.OrderBy(c => c.Idade).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // se nao der pra fazer a paginação
-            return new Retorno() { Status = false, Resultado =new List<string>(){ "Dados inválidos, nao foi possivel realizar a paginação." } };
+            return new Retorno { Status = false, Resultado =new List<string>(){ "Dados inválidos, nao foi possivel realizar a paginação." } };
         }
     }
 }

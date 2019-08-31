@@ -11,20 +11,20 @@ namespace ApiForSales.Controllers
     {
         [HttpGet]
         // método get para buscar todos
-        public async Task<IActionResult> Get() => Ok(new ClienteCore().AcharTodos().Resultado);
+        public async Task<IActionResult> Get() => Ok(new ClienteCore().BuscarTodos().Resultado);
 
         // método get para buscar por id
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var Core = new ClienteCore().AcharUm(id);
+            var Core = new ClienteCore().BuscarCliente(id);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
 
         [HttpGet("Paginas")]
         public async Task<IActionResult> PorPagina([FromQuery]string Ordem, [FromQuery] int numerodePaginas, [FromQuery]int qtdRegistros)
         {
-            var Core = new ClienteCore().PorPaginacao(Ordem, numerodePaginas, qtdRegistros);
+            var Core = new ClienteCore().RetornaClentePorPaginacao(Ordem, numerodePaginas, qtdRegistros);
             // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
 
             if (Core.Resultado.Count == 0)
@@ -35,7 +35,7 @@ namespace ApiForSales.Controllers
         // Buscar por data
         public async Task<IActionResult> AcharPordata([FromQuery] string DataComeco, [FromQuery] string DataFim)
         {
-            var Cor = new ClienteCore().BuscaPorData(DataComeco, DataFim);
+            var Cor = new ClienteCore().BuscaClientePorData(DataComeco, DataFim);
             return Cor.Status ? Ok(Cor.Resultado) : BadRequest(Cor.Resultado);
         }
 
@@ -50,14 +50,14 @@ namespace ApiForSales.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromBody]Cliente cliente, string id)
         {
-            var Core = new ClienteCore().AtualizarUm(id, cliente);
+            var Core = new ClienteCore().AtualizarCliente(id, cliente);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método para deletar por id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var Core = new ClienteCore().DeletarId(id);
+            var Core = new ClienteCore().DeletarPorId(id);
             return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
         }
     }

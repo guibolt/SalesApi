@@ -21,14 +21,14 @@ namespace ApiForSales.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var Core = new PedidoCore().AcharUm(id);
+            var Core = new PedidoCore().BuscarProdutoPorId(id);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
 
         [HttpGet("Paginas")]
         public async Task<IActionResult> PorPagina([FromQuery]string Ordem, [FromQuery] int numerodePaginas, [FromQuery]int qtdRegistros)
         {
-            var Core = new PedidoCore().PorPaginacao(Ordem, numerodePaginas, qtdRegistros);
+            var Core = new PedidoCore().PedidosPorPaginacao(Ordem, numerodePaginas, qtdRegistros);
             // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
             if (Core.Resultado.Count == 0)
                 return BadRequest("Essa pagina não existe!");
@@ -38,7 +38,7 @@ namespace ApiForSales.Controllers
         // Buscar por data
         public async Task<IActionResult> AcharPordata([FromQuery] string DataComeco, [FromQuery] string DataFim)
         {
-            var Cor = new PedidoCore().BuscaPorData(DataComeco, DataFim);
+            var Cor = new PedidoCore().BuscaPedidoPorData(DataComeco, DataFim);
             return Cor.Status ? Ok(Cor.Resultado) : BadRequest(Cor.Resultado);
         }
 
@@ -46,14 +46,14 @@ namespace ApiForSales.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Pedido pedido)
         {
-            var Core = new PedidoCore(pedido).RealizarPedido();
+            var Core = new PedidoCore(pedido).RealizarUmPedido();
             return Core.Status ? Created($"https://localhost/api/Pedidos/{pedido.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método para deletar por id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var Core = new ProdutoCore().DeletarId(id);
+            var Core = new ProdutoCore().DeletarProdutoPorId(id);
             return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
         }
     }

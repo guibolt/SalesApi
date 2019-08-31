@@ -33,7 +33,7 @@ namespace Core
         }
 
         //Método para cadastrar um produto
-        public Retorno CadastrarProduto()
+        public Retorno CadastrarUmProduto()
         {
             var valida = Validate(_produto);
 
@@ -49,50 +49,54 @@ namespace Core
             return new Retorno() { Status = true, Resultado = _produto };
         }
         // Método para retornar um produto
-        public Retorno AcharUm(string id)
+        public Retorno BuscarUmProduto(string id)
         {
-            if (!db.Produtos.Any(e => e.Id == id))
-                return new Retorno() { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
+            var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
+            if (umProduto == null)
+                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            return new Retorno() { Status = true, Resultado = db.Produtos.Find(c => c.Id.ToString() == id) };
+            return new Retorno { Status = true, Resultado = umProduto };
         }
 
         // Método para deletar por id
-        public Retorno DeletarId(string id)
+        public Retorno DeletarProdutoPorId(string id)
         {
-            if (!db.Produtos.Any(e => e.Id == id))
-                return new Retorno() { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
+            var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
+            if (umProduto == null)
+                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            return new Retorno() { Status = true, Resultado = db.Produtos.Find(c => c.Id.ToString() == id) };
+            db.Produtos.Remove(umProduto);
+
+            return new Retorno { Status = true, Resultado = "Produto removido!" };
         }
         // método para retornar todos os produtos registrados.
-        public Retorno AcharTodos() => new Retorno() { Status = true, Resultado = db.Produtos.OrderBy(n => n.Nome) };
+        public Retorno AcharTodos() => new Retorno { Status = true, Resultado = db.Produtos.OrderBy(n => n.Nome) };
 
-        public Retorno PorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
+        public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
-                return new Retorno() { Status = true, Resultado = db.Produtos.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+                return new Retorno { Status = true, Resultado = db.Produtos.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // faço a verificação e depois ordeno por nome. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "NOME")
-                return new Retorno() { Status = true, Resultado = db.Produtos.OrderBy(c => c.Nome).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+                return new Retorno { Status = true, Resultado = db.Produtos.OrderBy(c => c.Nome).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // faço a verificação e depois ordeno por menor preço. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MENORPRECO")
-                return new Retorno() { Status = true, Resultado = db.Produtos.OrderBy(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+                return new Retorno { Status = true, Resultado = db.Produtos.OrderBy(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
             // faço a verificação e depois ordeno por maior. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORPRECO")
-                return new Retorno() { Status = true, Resultado = db.Produtos.OrderByDescending(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+                return new Retorno { Status = true, Resultado = db.Produtos.OrderByDescending(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
             // se nao der pra fazer a paginação
-            return new Retorno() { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
+            return new Retorno { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
         }
 
         // Método para atualizar por id
-        public Retorno AtualizarUm(string id, Produto produto)
+        public Retorno AtualizarUmProduto(string id, Produto produto)
         {
             if (!db.Produtos.Any(e => e.Id == id))
-                return new Retorno() { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
+                return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
 
             var umProduto = db.Produtos.Find(c => c.Id.ToString() == id);
 
@@ -106,7 +110,7 @@ namespace Core
                 umProduto.Quantidade = produto.Quantidade;
 
             Arq.ManipulacaoDeArquivos(false, db);
-            return new Retorno() { Status = true, Resultado = umProduto };
+            return new Retorno { Status = true, Resultado = umProduto };
         }
     }
 }
