@@ -2,6 +2,7 @@
 using FluentValidation;
 using Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -13,8 +14,8 @@ namespace Core
         // Construtor sem argumento inicando a base dados
         public ClienteCore()
         {
+            
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
-
             if (db == null)  db = new Sistema();
         }
 
@@ -89,11 +90,10 @@ namespace Core
             if (cliente.Idade != 0)
                 umCliente.Idade = cliente.Idade;
 
-
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno() { Status = true, Resultado = umCliente };
         }
-
+        // método para buscar por data
         public Retorno BuscaPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -124,9 +124,9 @@ namespace Core
             // faço a verificação e depois ordeno por idade. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "IDADE")
                 return new Retorno() { Status = true, Resultado = db.Clientes.OrderBy(c => c.Idade).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
-          
+
             // se nao der pra fazer a paginação
-            return new Retorno() { Status = false, Resultado = "Dados inválidos, nao foi possivel realizar a paginação." };
+            return new Retorno() { Status = false, Resultado =new List<string>(){ "Dados inválidos, nao foi possivel realizar a paginação." } };
         }
     }
 }

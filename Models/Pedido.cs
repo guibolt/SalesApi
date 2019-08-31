@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace Model
 {
+    // Model de pedido
     public class Pedido 
     {
-
         public List<Produto> Produtos { get; set; } = new List<Produto>();
 
-        // Model de pedido
         public Cliente Cliente { get; set; }
         public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 6);
         public DateTime DataDoPedido { get; set; } = DateTime.Now;
@@ -18,7 +17,6 @@ namespace Model
         public void CalculaTotal()
         {
             Produtos.ForEach(c => ValorTotal += c.SubTotal());
-            
             if (ValorTotal > 300)
                 ValorTotal -= ValorTotal * 0.10;
             else if (ValorTotal > 100)
