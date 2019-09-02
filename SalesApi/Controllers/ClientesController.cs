@@ -11,7 +11,11 @@ namespace ApiForSales.Controllers
     {
         [HttpGet]
         // método get para buscar todos
-        public async Task<IActionResult> Get() => Ok(new ClienteCore().BuscarTodos().Resultado);
+        public async Task<IActionResult> Get()
+        {
+            var Core = new ClienteCore().BuscarTodosClientes();
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
+        }
 
         // método get para buscar por id
         [HttpGet("{id}")]
@@ -27,8 +31,7 @@ namespace ApiForSales.Controllers
             var Core = new ClienteCore().RetornaClentePorPaginacao(Ordem, numerodePaginas, qtdRegistros);
             // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
 
-            if (Core.Resultado.Count == 0)
-                return BadRequest("Essa pagina não existe!");
+            if (Core.Resultado.Count == 0) return BadRequest("Essa pagina não existe!");
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
         [HttpGet("Data")]
@@ -58,7 +61,7 @@ namespace ApiForSales.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var Core = new ClienteCore().DeletarPorId(id);
-            return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
+            return Core.Status ? Accepted(Core.Resultado) : NoContent();
         }
     }
 }

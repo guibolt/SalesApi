@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Core
 {
-    public class PedidoCore: AbstractValidator<Pedido>
+    public class PedidoCore : AbstractValidator<Pedido>
     {
         private Pedido _pedido;
         public Sistema db { get; set; }
@@ -15,13 +15,13 @@ namespace Core
         public PedidoCore()
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
-            if (db == null) db = new Sistema();
+            db = db ?? new Sistema();
         }
 
         public PedidoCore(Pedido pedido)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
-            if (db == null) db = new Sistema();
+            db = db ?? new Sistema();
 
             _pedido = pedido;
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
@@ -39,7 +39,7 @@ namespace Core
             var valida = Validate(_pedido);
             // checa se os dados sao validos
             if (!valida.IsValid)
-                return new Retorno { Status = false, Resultado =  valida.Errors.Select(c => c.ErrorMessage).ToList() };
+                return new Retorno { Status = false, Resultado = valida.Errors.Select(c => c.ErrorMessage).ToList() };
 
             // checa se o cliente realmente existe na base
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
@@ -53,21 +53,23 @@ namespace Core
             db.Pedidos.Add(_pedido);
 
             //procura e atribui valor total para o cliente
-             db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id).TotalComprado += _pedido.ValorTotal;
+            db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id).TotalComprado += _pedido.ValorTotal;
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = _pedido };
         }
-        public Retorno AcharTodos() => new Retorno { Status = true, Resultado = db.Pedidos };
+        public Retorno BuscarTodosPedidos()
+        {
+            var todosPedidos = db.Pedidos;
+            return todosPedidos == null ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = todosPedidos };
+        }
+
 
         // Método para returnar um registro
         public Retorno BuscarProdutoPorId(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
-            if (umPedido == null)
-                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
-
-            return new Retorno { Status = true, Resultado = umPedido };
+            return umPedido == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umPedido };
         }
 
         //Método para deletar por id
@@ -75,7 +77,7 @@ namespace Core
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
             if (umPedido == null)
-                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+                new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Pedidos.Remove(umPedido);
 
@@ -122,7 +124,7 @@ namespace Core
         {
             foreach (var produto in _pedido.Produtos)
             {
-                if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade )
+                if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade)
                     return false;
             }
             return true;

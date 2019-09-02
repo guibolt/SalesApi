@@ -15,14 +15,14 @@ namespace Core
         public ProdutoCore()
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
-            if (db == null) db = new Sistema();
+            db = db ?? new Sistema();
         }
         // Construtor com a validação
         public ProdutoCore(Produto produto)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
 
-            if (db == null) db = new Sistema();
+            db = db ?? new Sistema();
 
             _produto = produto;
 
@@ -52,25 +52,22 @@ namespace Core
         public Retorno BuscarUmProduto(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
-            if (umProduto == null)
-                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
-
-            return new Retorno { Status = true, Resultado = umProduto };
+            return  umProduto == null ? new  Retorno {Status = false, Resultado = "Registro nao existe na base de dados" } :  new Retorno { Status = true, Resultado = umProduto };
         }
 
         // Método para deletar por id
         public Retorno DeletarProdutoPorId(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
-            if (umProduto == null)
-                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+            return umProduto == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = db.Produtos.Remove(umProduto) };
 
-            db.Produtos.Remove(umProduto);
-
-            return new Retorno { Status = true, Resultado = "Produto removido!" };
         }
         // método para retornar todos os produtos registrados.
-        public Retorno AcharTodos() => new Retorno { Status = true, Resultado = db.Produtos.OrderBy(n => n.Nome) };
+        public Retorno BuscarTodosProdutos()
+        {
+            var todosProdutos = db.Produtos;
+            return todosProdutos == null ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
+        }
 
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
@@ -95,10 +92,10 @@ namespace Core
         // Método para atualizar por id
         public Retorno AtualizarUmProduto(string id, Produto produto)
         {
-            if (!db.Produtos.Any(e => e.Id == id))
-                return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
+            var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
-            var umProduto = db.Produtos.Find(c => c.Id.ToString() == id);
+            if (umProduto == null)
+                return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
 
             if (produto.Nome != null)
                 umProduto.Nome = produto.Nome;

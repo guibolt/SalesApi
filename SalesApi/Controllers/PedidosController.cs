@@ -15,7 +15,12 @@ namespace ApiForSales.Controllers
     {
         [HttpGet]
         // método get para buscar todos
-        public async Task<IActionResult> Get() => Ok(new PedidoCore().AcharTodos().Resultado);
+        public async Task<IActionResult> Get()
+        {
+            var Core = new PedidoCore().BuscarTodosPedidos();
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
+        }
+
 
         // método get para buscar por id
         [HttpGet("{id}")]
