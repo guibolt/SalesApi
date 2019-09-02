@@ -58,7 +58,7 @@ namespace Core
         public Retorno BuscarTodosClientes()
         {
             var todosClientes = db.Clientes;
-            return todosClientes == null ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : new Retorno { Status = true, Resultado = todosClientes.OrderBy(n => n.Nome) };
+            return todosClientes.Count == 0 ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : new Retorno { Status = true, Resultado = todosClientes.OrderBy(n => n.Nome) };
         }
 
         public Retorno DeletarPorId(string id)
@@ -94,7 +94,7 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umCliente };
         }
-        // método para buscar por data
+        //método para buscar por data
         public Retorno BuscaClientePorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -103,14 +103,14 @@ namespace Core
 
             // Tento fazer a conversao da segunda data for invalida faço somente a pesquisa da primeira data
             if (!DateTime.TryParse(dataFim, out segundaData))
-                return new Retorno { Status = true, Resultado = db.Clientes.Where(c => c.DataCadastro >= primeiraData).ToList() };
+                return new Retorno { Status = true, Resultado = db.Clientes.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData).ToList() };
 
             // Tento fazer a conversao da primeiradata for invalida faço somente a pesquisa da segunda data
             if (!DateTime.TryParse(dataComeço, out primeiraData))
-                return new Retorno { Status = true, Resultado = db.Clientes.Where(c => c.DataCadastro <= segundaData).ToList() };
+                return new Retorno { Status = true, Resultado = db.Clientes.Where(c => Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
 
             // returno a lista completa entre as duas datas informadas.
-            return new Retorno { Status = true, Resultado = db.Clientes.Where(c => c.DataCadastro >= primeiraData && c.DataCadastro <= segundaData).ToList() };
+            return new Retorno { Status = true, Resultado = db.Clientes.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
         public Retorno RetornaClentePorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {

@@ -63,14 +63,14 @@ namespace Core
         public Retorno BuscarTodosPedidos()
         {
             var todosPedidos = db.Pedidos;
-            return todosPedidos == null ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = todosPedidos };
+            return todosPedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = todosPedidos };
         }
 
 
         // Método para returnar um registro
         public Retorno BuscarProdutoPorId(string id)
         {
-            var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
+            var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id) ;
             return umPedido == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umPedido };
         }
 
@@ -94,14 +94,14 @@ namespace Core
 
             // Tento fazer a conversao da segunda data for invalida faço somente a pesquisa da primeira data
             if (!DateTime.TryParse(dataFim, out segundaData))
-                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido >= primeiraData).ToList() };
+                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData).ToList() };
 
             // Tento fazer a conversao da primeiradata for invalida faço somente a pesquisa da segunda data
             if (!DateTime.TryParse(dataComeço, out primeiraData))
-                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido <= segundaData).ToList() };
+                return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
 
             // returno a lista completa entre as duas datas informadas.
-            return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => c.DataDoPedido >= primeiraData && c.DataDoPedido <= segundaData).ToList() };
+            return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
         public Retorno PedidosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {

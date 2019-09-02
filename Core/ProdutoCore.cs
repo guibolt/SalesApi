@@ -1,6 +1,7 @@
 ﻿using Core.Util;
 using FluentValidation;
 using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -71,7 +72,7 @@ namespace Core
         public Retorno BuscarTodosProdutos()
         {
             var todosProdutos = db.Produtos;
-            return todosProdutos == null ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
+            return todosProdutos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
         }
 
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
@@ -92,6 +93,24 @@ namespace Core
                 return new Retorno { Status = true, Resultado = db.Produtos.OrderByDescending(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
             // se nao der pra fazer a paginação
             return new Retorno { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
+        }
+
+        public Retorno BuscaPedidoPorData(string dataComeço, string dataFim)
+        {
+            // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
+            if (!DateTime.TryParse(dataComeço, out DateTime primeiraData) && !DateTime.TryParse(dataFim, out DateTime segundaData))
+                return new Retorno { Status = false, Resultado = "Dados Invalidos" };
+
+            // Tento fazer a conversao da segunda data for invalida faço somente a pesquisa da primeira data
+            if (!DateTime.TryParse(dataFim, out segundaData))
+                return new Retorno { Status = true, Resultado = db.Produtos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData).ToList() };
+
+            // Tento fazer a conversao da primeiradata for invalida faço somente a pesquisa da segunda data
+            if (!DateTime.TryParse(dataComeço, out primeiraData))
+                return new Retorno { Status = true, Resultado = db.Produtos.Where(c => Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
+
+            // returno a lista completa entre as duas datas informadas.
+            return new Retorno { Status = true, Resultado = db.Produtos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
 
         // Método para atualizar por id
