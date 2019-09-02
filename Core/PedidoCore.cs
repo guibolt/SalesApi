@@ -1,4 +1,5 @@
-﻿using Core.Util;
+﻿
+using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace Core
 {
+
     public class PedidoCore : AbstractValidator<Pedido>
     {
         private Pedido _pedido;
@@ -113,7 +115,7 @@ namespace Core
 
             // faço a verificação e depois ordeno por idade. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORVALOR")
-                return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+                return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()};
 
             // se nao der pra fazer a paginação
             return new Retorno { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };

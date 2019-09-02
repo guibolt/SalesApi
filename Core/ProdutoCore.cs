@@ -52,15 +52,20 @@ namespace Core
         public Retorno BuscarUmProduto(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
-            return  umProduto == null ? new  Retorno {Status = false, Resultado = "Registro nao existe na base de dados" } :  new Retorno { Status = true, Resultado = umProduto };
+            return umProduto == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umProduto };
         }
 
         // Método para deletar por id
         public Retorno DeletarProdutoPorId(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
-            return umProduto == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = db.Produtos.Remove(umProduto) };
 
+            if (umProduto == null)
+                return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
+
+            db.Produtos.Remove(umProduto);
+
+            return new Retorno { Status = true, Resultado = "Produto deletado!"};
         }
         // método para retornar todos os produtos registrados.
         public Retorno BuscarTodosProdutos()
