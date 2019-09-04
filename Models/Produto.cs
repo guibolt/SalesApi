@@ -1,8 +1,8 @@
 ﻿namespace Model
 {
+    // Model de produto herdando da base
     public class Produto : Base
     {
-        // Model de produto herdando da base
         public string Nome { get; set; }
         public double Preco { get; set; }
         public int Quantidade { get; set; }

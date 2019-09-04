@@ -6,6 +6,6 @@ namespace Model
     {
         // Model de base 
         public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0,6);
-        public string DataCadastro { get; set; } = DateTime.Now.ToString("dddd, dd De MMMM De yyyy");
+        public string DataCadastro { get; set; } = DateTime.Now.ToString("dddd/MMMM/yyyy");
     }
 }

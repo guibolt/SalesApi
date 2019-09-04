@@ -28,8 +28,8 @@ namespace Core
      
             RuleFor(c => c.Idade).GreaterThan(6).WithMessage("A idade do cliente deve ser maior que 6");
             RuleFor(c => c.Nome).MinimumLength(3).NotNull().WithMessage("O nome deve conter mais que 2 caracteres");
-            RuleFor(c => c.Documento).Length(11, 11).NotNull().WithMessage("Cpf inválido");
-            RuleFor(c => c.Sexo.ToUpper()).NotNull().Must(c => c == "MASCULINO"|| c == "FEMININO").WithMessage($"Campo sexo não pode ser nulo");
+            RuleFor(c => c.Cpf).Length(11, 11).NotNull().WithMessage("Cpf inválido");
+            RuleFor(c => c.Genero.ToUpper()).NotNull().Must(c => c == "MASCULINO"|| c == "FEMININO").WithMessage($"Campo sexo não pode ser nulo");
         }
         // Método para cadastar um cliente
         public Retorno CadastrarCliente()
@@ -39,7 +39,7 @@ namespace Core
             if (!valida.IsValid)
                 return new Retorno { Status = false, Resultado = valida.Errors.Select(c => c.ErrorMessage).ToList() };
 
-            if (db.Clientes.Any(c => c.Nome == _cliente.Nome) || db.Clientes.Any(c => c.Documento == _cliente.Documento))
+            if (db.Clientes.Any(c => c.Nome == _cliente.Nome) || db.Clientes.Any(c => c.Cpf == _cliente.Cpf))
                 return new Retorno { Status = false, Resultado = "Cliente já registrado" };
 
             db.Clientes.Add(_cliente);
@@ -52,7 +52,6 @@ namespace Core
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
             return umCliente == null ? new Retorno { Status = false, Resultado = "Cliente nao existe na base de dados" } : new Retorno { Status = true, Resultado = umCliente };
-
         }
         // método para retornar todos os clientes registrados.
         public Retorno BuscarTodosClientes()
@@ -76,14 +75,13 @@ namespace Core
         public Retorno AtualizarCliente(string id, Cliente cliente)
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
-            if (umCliente == null)
-                return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umCliente == null) return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            if (cliente.Documento != null)
-                umCliente.Documento = cliente.Documento;
+            if (cliente.Cpf != null)
+                umCliente.Cpf = cliente.Cpf;
 
-            if (cliente.Sexo != null)
-                umCliente.Sexo = cliente.Sexo;
+            if (cliente.Genero != null)
+                umCliente.Genero = cliente.Genero;
 
             if (cliente.Nome != null)
                  umCliente.Nome = cliente.Nome;
@@ -112,8 +110,13 @@ namespace Core
             // returno a lista completa entre as duas datas informadas.
             return new Retorno { Status = true, Resultado = db.Clientes.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
-        public Retorno RetornaClentePorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
+
+        // Método para exibir os registros por paginação
+        public Retorno ClentesPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
+            // Limitando a quantidade registros para a paginação
+            if (qtdRegistros > 50) qtdRegistros = 50;
+
             // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
                 return new Retorno() { Status = true, Resultado = db.Clientes.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
@@ -127,7 +130,7 @@ namespace Core
                 return new Retorno() { Status = true, Resultado = db.Clientes.OrderBy(c => c.Idade).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // se nao der pra fazer a paginação
-            return new Retorno { Status = false, Resultado =new List<string>(){ "Dados inválidos, nao foi possivel realizar a paginação." } };
+            return new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
     }
 }

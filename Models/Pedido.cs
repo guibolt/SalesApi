@@ -6,14 +6,10 @@ namespace Model
     // Model de pedido
     public class Pedido : Base
     {
-    
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public Cliente Cliente { get; set; }
-        public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 6);
         public double ValorTotal { get; set; }
    
-
-
         // Método para realizar o calcuto atribuir o valor ao pedido.
         public void CalculaTotal()
         {

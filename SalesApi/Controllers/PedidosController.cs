@@ -34,9 +34,6 @@ namespace ApiForSales.Controllers
         public async Task<IActionResult> PorPagina([FromQuery]string Ordem, [FromQuery] int numerodePaginas, [FromQuery]int qtdRegistros)
         {
             var Core = new PedidoCore().PedidosPorPaginacao(Ordem, numerodePaginas, qtdRegistros);
-            // verifico se pagina que o usuario pediu é valida, se nao retorno um BadRequest
-            if (Core.Resultado.Count == 0)
-                return BadRequest("Essa pagina não existe!");
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
         [HttpGet("Data")]

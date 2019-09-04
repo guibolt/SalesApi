@@ -75,8 +75,12 @@ namespace Core
             return todosProdutos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
         }
 
+        // Método para exibir os registros por paginação
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
+            // Limitando a quantidade registros para a paginação
+            if (qtdRegistros > 50) qtdRegistros = 50;
+
             // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
                 return new Retorno { Status = true, Resultado = db.Produtos.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
@@ -91,11 +95,13 @@ namespace Core
             // faço a verificação e depois ordeno por maior. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORPRECO")
                 return new Retorno { Status = true, Resultado = db.Produtos.OrderByDescending(c => c.Preco).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
+
             // se nao der pra fazer a paginação
-            return new Retorno { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
+            return new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
-        public Retorno BuscaPedidoPorData(string dataComeço, string dataFim)
+        // Método para retornar produto por data de cadastro
+        public Retorno BuscaProdutoPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
             if (!DateTime.TryParse(dataComeço, out DateTime primeiraData) && !DateTime.TryParse(dataFim, out DateTime segundaData))
@@ -118,8 +124,7 @@ namespace Core
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
-            if (umProduto == null)
-                return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
+            if (umProduto == null) return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
 
             if (produto.Nome != null)
                 umProduto.Nome = produto.Nome;

@@ -28,7 +28,9 @@ namespace Core
             _pedido = pedido;
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
-            RuleFor(c => c.Produtos).Must(produto => ValidaProduto()).WithMessage("O produto está inválido.");
+            RuleForEach(c => c.Produtos).
+                Must(produto=>db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade ? false:true).
+                WithMessage("O produto está inválido.");
 
             RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0);
 
@@ -74,18 +76,18 @@ namespace Core
             return umPedido == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umPedido };
         }
 
-        //Método para deletar por id
+        //Método para deletar pedido por id
         public Retorno DeletarPedidoPorID(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
-            if (umPedido == null)
-                new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umPedido == null) new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Pedidos.Remove(umPedido);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = "Registro removido!" };
         }
+        // Método para retornar pedido por data de cadastro
         public Retorno BuscaPedidoPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -103,8 +105,13 @@ namespace Core
             // returno a lista completa entre as duas datas informadas.
             return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
+
+        // Método para exibir os registros por paginação
         public Retorno PedidosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
+            // Limitando a quantidade registros para a paginação
+            if (qtdRegistros > 50) qtdRegistros = 50;
+
             // checo se as paginação é valida pelas variaveis e se sim executo o skip take contendo o calculo
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor == null)
                 return new Retorno { Status = true, Resultado = db.Pedidos.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
@@ -118,18 +125,7 @@ namespace Core
                 return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()};
 
             // se nao der pra fazer a paginação
-            return new Retorno { Status = false, Resultado = new List<string>() { "Dados inválidos, nao foi possivel realizar a paginação." } };
-        }
-
-        // método para validar os produtos inseridos
-        public bool ValidaProduto()
-        {
-            foreach (var produto in _pedido.Produtos)
-            {
-                if (db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade)
-                    return false;
-            }
-            return true;
+            return new Retorno { Status = true, Resultado =($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
     }
 }
