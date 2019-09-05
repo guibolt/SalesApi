@@ -5,6 +5,7 @@
     {
         public string Nome { get; set; }
         public double Preco { get; set; }
+        public Categorias Categoria { get; set; }
         public int Quantidade { get; set; }
 
         //Método para relizar o calculo parcial

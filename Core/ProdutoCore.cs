@@ -66,13 +66,11 @@ namespace Core
             db.Produtos.Remove(umProduto);
 
             return new Retorno { Status = true, Resultado = "Produto deletado!"};
+            Arq.ManipulacaoDeArquivos(false, db);
         }
         // método para retornar todos os produtos registrados.
-        public Retorno BuscarTodosProdutos()
-        {
-            var todosProdutos = db.Produtos;
-            return todosProdutos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
-        }
+        public Retorno BuscarTodosProdutos() => db.Produtos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
+        : new Retorno { Status = true, Resultado = db.Produtos };
 
         // Método para exibir os registros por paginação
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)

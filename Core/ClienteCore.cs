@@ -54,12 +54,9 @@ namespace Core
             return umCliente == null ? new Retorno { Status = false, Resultado = "Cliente nao existe na base de dados" } : new Retorno { Status = true, Resultado = umCliente };
         }
         // método para retornar todos os clientes registrados.
-        public Retorno BuscarTodosClientes()
-        {
-            var todosClientes = db.Clientes;
-            return todosClientes.Count == 0 ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : new Retorno { Status = true, Resultado = todosClientes.OrderBy(n => n.Nome) };
-        }
-
+        public Retorno BuscarTodosClientes() =>  db.Clientes.Count == 0 ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : 
+            new Retorno { Status = true, Resultado = db.Clientes.OrderBy(n => n.Nome) };
+        
         public Retorno DeletarPorId(string id)
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);

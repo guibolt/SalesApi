@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Model
 {
-    public enum Categorias : int
+    public enum Categorias
     {
         SMARTPHONES = 1,
         INFORMATICA = 2,

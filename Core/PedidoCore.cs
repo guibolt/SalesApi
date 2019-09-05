@@ -62,12 +62,8 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = _pedido };
         }
-        public Retorno BuscarTodosPedidos()
-        {
-            var todosPedidos = db.Pedidos;
-            return todosPedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = todosPedidos };
-        }
-
+        public Retorno BuscarTodosPedidos() => db.Pedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } :
+            new Retorno { Status = true, Resultado = db.Pedidos };
 
         // Método para returnar um registro
         public Retorno BuscarProdutoPorId(string id)
