@@ -9,7 +9,6 @@ namespace Model
         public List<Pedido> Pedidos { get; set; } = new List<Pedido>();
         public List<Cliente> Clientes { get; set; } = new List<Cliente>();
         public List<Promocao> Promocoes { get; set; } = new List<Promocao>();
-
         public List <string> ListaCategorias { get; set; } = new List<string>
             {
                 "SMARTPHONES Categoria: 1",

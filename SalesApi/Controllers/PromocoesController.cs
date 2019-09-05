@@ -19,11 +19,11 @@ namespace ApiForSales.Controllers
 
         [HttpGet("Categorias")]
         // método get para buscar todos
-        //public async Task<IActionResult> Gets()
-        //{
-        //    var Core = new PromocaoCore().ExibirCategorias();
-        //    return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
-        //}
+        public async Task<IActionResult> Gets()
+        {
+            var Core = new PromocaoCore().ExibirCategorias();
+            return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
+        }
 
         // método get para buscar por id
         [HttpGet("{id}")]

@@ -8,7 +8,6 @@ using System.Linq;
 
 namespace Core
 {
-
     public class PedidoCore : AbstractValidator<Pedido>
     {
         private Pedido _pedido;
@@ -38,6 +37,7 @@ namespace Core
             _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
         }
 
+        //Método para relizar o pedido.
         public Retorno RealizarUmPedido()
         {
             var valida = Validate(_pedido);
@@ -49,15 +49,21 @@ namespace Core
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
+            // método para executar a promocao
+            if (ValidaTodasPromocoes(_pedido))
+            _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
+
             // para movimentar o estoque.
             _pedido.Produtos.ForEach(d => db.Produtos.FirstOrDefault(c => c.Id == d.Id).Quantidade -= d.Quantidade);
 
             //calcula o total e adciona na lista
             _pedido.CalculaTotal();
-            db.Pedidos.Add(_pedido);
-
+       
             //procura e atribui valor total para o cliente
             db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id).TotalComprado += _pedido.ValorTotal;
+
+            //adciona o cliente na lista
+            db.Pedidos.Add(_pedido);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = _pedido };
@@ -122,6 +128,17 @@ namespace Core
 
             // se nao der pra fazer a paginação
             return new Retorno { Status = true, Resultado =($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
+        }
+
+        public bool ValidaTodasPromocoes(Pedido pedido)
+        {
+            foreach (var produto in pedido.Produtos)
+            {
+                if (!db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).ValidaPromocao())
+                    return false;
+            }
+
+            return true;
         }
     }
 }

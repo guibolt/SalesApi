@@ -16,6 +16,7 @@
         {
             Nome = produto.Nome;
             Preco = produto.Preco;
+            Categoria = produto.Categoria;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Core
                 WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
             RuleFor(p => p.Preco).GreaterThan(0).NotEmpty().WithMessage("O preço precisa ser maior que 0 e nao pdoe ser vazio");
             RuleFor(p => p.Quantidade).NotEmpty().GreaterThan(0).WithMessage("A quantidade do produto deve ser de no minimo um produto");
+            RuleFor(p => p.Categoria).IsInEnum().WithMessage("Categoria nao existe.");
         }
 
         //Método para cadastrar um produto
@@ -65,8 +66,9 @@ namespace Core
 
             db.Produtos.Remove(umProduto);
 
-            return new Retorno { Status = true, Resultado = "Produto deletado!"};
             Arq.ManipulacaoDeArquivos(false, db);
+       
+            return new Retorno { Status = true, Resultado = "Produto deletado!"};
         }
         // método para retornar todos os produtos registrados.
         public Retorno BuscarTodosProdutos() => db.Produtos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
@@ -135,5 +137,7 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umProduto };
         }
+        // Exibe as categorias possiveis no momento
+        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
     }
 }

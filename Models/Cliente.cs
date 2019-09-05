@@ -19,6 +19,7 @@ namespace Model
             Genero = cliente.Genero;
             Nome = cliente.Nome;
             DataCadastro = cliente.DataCadastro;
+            TotalComprado = cliente.TotalComprado;
         }
     } 
 }

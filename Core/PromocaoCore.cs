@@ -30,8 +30,7 @@ namespace Core
             RuleFor(p => p.Descricao).MinimumLength(3).WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
             RuleFor(p => p.DataFinal).GreaterThan(DateTime.Now);
             RuleFor(p => p.TaxaDesconto).GreaterThan(0).LessThan(90).WithMessage("Taxa precisa estar entre 1 e 90");
-
-
+            RuleFor(p => p.Categoria).IsInEnum().WithMessage("Categoria nao existe.");
         }
 
         //Método para cadastrar uma promocao
@@ -43,7 +42,7 @@ namespace Core
                 return new Retorno { Status = false, Resultado = valida.Errors.Select(a => a.ErrorMessage).ToList() };
 
             if (db.Promocoes.Any(c => c.Descricao == _promocao.Descricao))
-                return new Retorno() { Status = false, Resultado = "Este produto ja está cadastrado" };
+                return new Retorno() { Status = false, Resultado = "Essa promocão ja está cadastrada" };
 
                 
             db.Promocoes.Add(_promocao);
@@ -131,7 +130,7 @@ namespace Core
             return new Retorno { Status = true, Resultado = umaPromocao };
         }
 
-       // public Retorno ExibirCategorias() =>  new Retorno { Status = true, Resultado = db.lis };
-        
+        // Exibe as categorias possiveis no momento
+        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
     }
 }
