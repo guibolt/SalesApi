@@ -61,8 +61,7 @@ namespace Core
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
-            if (umProduto == null)
-                return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umProduto == null)  return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Produtos.Remove(umProduto);
 
