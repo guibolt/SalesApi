@@ -49,7 +49,7 @@ namespace Core
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
-            // método para executar a promocao
+            // para executar a promocao
             if (ValidaTodasPromocoes(_pedido))
             _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
 
@@ -82,7 +82,7 @@ namespace Core
         public Retorno DeletarPedidoPorID(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
-            if (umPedido == null) new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umPedido == null) new Retorno{ Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Pedidos.Remove(umPedido);
 
@@ -129,7 +129,7 @@ namespace Core
             // se nao der pra fazer a paginação
             return new Retorno { Status = true, Resultado =($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
-
+        //Método para realizar a validacao de todas as possiveis promocoes dos produtos na lista de pedido em questão.
         public bool ValidaTodasPromocoes(Pedido pedido)
         {
             foreach (var produto in pedido.Produtos)

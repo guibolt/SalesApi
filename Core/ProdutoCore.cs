@@ -62,13 +62,13 @@ namespace Core
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
-            if (umProduto == null)  return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umProduto == null) return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Produtos.Remove(umProduto);
 
             Arq.ManipulacaoDeArquivos(false, db);
-       
-            return new Retorno { Status = true, Resultado = "Produto deletado!"};
+
+            return new Retorno { Status = true, Resultado = "Produto deletado!" };
         }
         // método para retornar todos os produtos registrados.
         public Retorno BuscarTodosProdutos() => db.Produtos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
@@ -137,7 +137,22 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umProduto };
         }
-        // Exibe as categorias possiveis no momento
-        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
+        // Exibe as categorias de produtos.
+        public Retorno ExibirCategorias() => new Retorno
+        {
+            Status = true,
+            Resultado = new List<string>
+            {
+             "SMARTPHONES Categoria: 1",
+            "INFORMATICA Categoria: 2",
+            "GAMES Categoria: 3",
+            "VESTUARIO Categoria: 4",
+            "SAUDE Categoria: 5",
+            "FITNESS Categoria: 6",
+            "MOVEIS Categoria: 7",
+            "BRINQUEDOS Categoria: 8",
+            "COSMETICOS Categoria: 9",
+            "ELECTRODOMESTICOS Categoria: 10", }
+        };
     }
 }

@@ -44,7 +44,6 @@ namespace Core
             if (db.Promocoes.Any(c => c.Descricao == _promocao.Descricao))
                 return new Retorno() { Status = false, Resultado = "Essa promocão ja está cadastrada" };
 
-                
             db.Promocoes.Add(_promocao);
             Arq.ManipulacaoDeArquivos(false, db);
 
@@ -72,7 +71,6 @@ namespace Core
         public Retorno BuscarTodasPromoces() => db.Promocoes.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
         : new Retorno { Status = true, Resultado = db.Promocoes };
         
-
         // Método para exibir os registros por paginação
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
@@ -126,11 +124,15 @@ namespace Core
             if (promocao.Categoria != 0)
                 umaPromocao.Categoria = promocao.Categoria;
 
+            if (promocao.DataFinal != null)
+                umaPromocao.DataFinal = promocao.DataFinal;
+
+            if (promocao.Concluida)
+                umaPromocao.Concluida = promocao.Concluida;
+
+
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umaPromocao };
         }
-
-        // Exibe as categorias possiveis no momento
-        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
     }
 }

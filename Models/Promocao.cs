@@ -19,6 +19,7 @@ namespace Model
             produto.Preco -= produto.Preco * taxa;
         }
 
+        //Método para realizar a validacao da promocao
        public bool ValidaPromocao()
         {
             if (DateTime.Now >= DataFinal || Concluida)

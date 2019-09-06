@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Model
 {
+    //Enum com as categorias disponiveis
     public enum Categorias : int
     {
         SMARTPHONES = 1,
