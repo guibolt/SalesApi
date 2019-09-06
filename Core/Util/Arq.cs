@@ -25,9 +25,9 @@ namespace Core.Util
                 return (true, null);
 
             }
-            catch (Exception)
+            catch (Exception e )
             {
-                throw;
+                throw e;
             }
 
         }

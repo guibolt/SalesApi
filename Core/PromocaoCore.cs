@@ -79,7 +79,7 @@ namespace Core
         ///  método para retornar todos os produtos registrados na base de dados.
         /// </summary>
         /// <returns></returns>
-        public Retorno BuscarTodasPromoces()
+        public Retorno BuscarTodasPromocoes()
         {
             var todasPromocoes = db.Promocoes;
             return todasPromocoes.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todasPromocoes };
@@ -92,7 +92,6 @@ namespace Core
         /// <param name="numeroPagina"></param>
         /// <param name="qtdRegistros"></param>
         /// <returns></returns>
-        // Método para exibir os registros por paginação
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // Limitando a quantidade registros para a paginação
@@ -106,8 +105,8 @@ namespace Core
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "DESCRICAO")
                 return new Retorno { Status = true, Resultado = db.Promocoes.OrderBy(c => c.Descricao.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()) };
 
-            // se nao der pra fazer a paginação
-            return new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
+            return db.Promocoes.Count == 0 ? new Retorno { Status = false, Resultado = "Não tem nenhum item na Lista" } :
+                new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Promocoes.Count()}, Exibindo a lista padrão:", db.Promocoes.Take(5).ToList()) };
         }
 
         /// <summary>

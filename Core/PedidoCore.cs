@@ -156,7 +156,9 @@ namespace Core
                 return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()};
 
             // se nao der pra fazer a paginação
-            return new Retorno { Status = true, Resultado =($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
+
+            return db.Pedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não tem nenhum item na Lista" } :
+                new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
         /// <summary>
