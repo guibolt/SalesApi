@@ -53,7 +53,7 @@ namespace ApiForSales.Controllers
         [HttpPost]
         public async Task<IActionResult> CadastrarCliente([FromBody] ClienteView cliente)
         {
-            var Core = new ClienteCore(cliente).CadastrarCliente();
+            var Core = new ClienteCore(cliente,_mapper).CadastrarCliente();
             return Core.Status ? Created($"https://localhost/api/Clientes/{Core.Resultado.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método put para atualizar um cliente

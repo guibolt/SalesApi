@@ -32,6 +32,7 @@ namespace SalesApi
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingConfig());
+   
             });
             IMapper mapper = config.CreateMapper();
             services.AddSingleton(mapper);

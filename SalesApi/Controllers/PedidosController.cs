@@ -41,7 +41,7 @@ namespace ApiForSales.Controllers
             var Cor = new PedidoCore().BuscaPedidoPorData(DataComeco, DataFim);
             return Cor.Status ? Ok(Cor.Resultado) : BadRequest(Cor.Resultado);
         }
-        
+
         // Método post para cadastro de um produto
         [HttpPost]
         public async Task<IActionResult> EfetuarPedido([FromBody] Pedido pedido)

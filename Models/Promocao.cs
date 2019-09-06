@@ -14,7 +14,6 @@ namespace Model
         public Categorias Categoria { get; set; }
         public bool Concluida { get; set; } = false;
 
-
         /// <summary>
         /// método para promover a mudança no valor do produto.
         /// </summary>

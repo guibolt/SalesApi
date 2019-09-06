@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using Model;
@@ -9,11 +10,16 @@ namespace ApiForSales.Controllers
     [ApiController]
     public class PromocoesController: ControllerBase
     {
+        private readonly IMapper _mapper;
+        public PromocoesController(IMapper Mapper)
+        {
+            _mapper = Mapper;
+        }
         [HttpGet]
         // método get para buscar todos as promocoes
         public async Task<IActionResult> RetornaTodasPromocoes()
         {
-            var Core = new PromocaoCore().BuscarTodasPromocoes();
+            var Core = new PromocaoCore(_mapper).BuscarTodasPromocoes();
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
 
@@ -21,36 +27,36 @@ namespace ApiForSales.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> RetornaPromocao(string id)
         {
-            var Core = new PromocaoCore().BuscarumaPromocao(id);
+            var Core = new PromocaoCore(_mapper).BuscarumaPromocao(id);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
        //Método get para a exiição por paginação
         [HttpGet("Paginas")]
         public async Task<IActionResult> RetornoPorPagina([FromQuery]string Ordem, [FromQuery] int numerodePaginas, [FromQuery]int qtdRegistros)
         {
-            var Core = new PromocaoCore().ProdutosPorPaginacao(Ordem, numerodePaginas, qtdRegistros);
+            var Core = new PromocaoCore(_mapper).ProdutosPorPaginacao(Ordem, numerodePaginas, qtdRegistros);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
 
         // Método post para cadastro
         [HttpPost]
-        public async Task<IActionResult> CadastrarPromocao([FromBody] Promocao produto)
+        public async Task<IActionResult> CadastrarPromocao([FromBody] PromocaoView promocao)
         {
-            var Core = new PromocaoCore(produto).CadastrarPromocao();
-            return Core.Status ? Created($"https://localhost/api/Produtos/{produto.Id}", Core.Resultado) : BadRequest(Core.Resultado);
+            var Core = new PromocaoCore(promocao, _mapper).CadastrarPromocao();
+            return Core.Status ? Created($"https://localhost/api/Produtos/{Core.Resultado.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método put para atualizar uma promocão
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarPromocao([FromBody]Promocao promocao, string id)
+        public async Task<IActionResult> AtualizarPromocao([FromBody]PromocaoView promocao, string id)
         {
-            var Core = new PromocaoCore().AtualizarumaPromocao(id, promocao);
+            var Core = new PromocaoCore(promocao, _mapper).AtualizarumaPromocao(id);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método para deletar por id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarPromocao(string id)
         {
-            var Core = new PromocaoCore().DeletarPromocao(id);
+            var Core = new PromocaoCore(_mapper).DeletarPromocao(id);
             return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
         }
     }

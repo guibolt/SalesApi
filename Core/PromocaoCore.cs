@@ -1,4 +1,5 @@
-﻿using Core.Util;
+﻿using AutoMapper;
+using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -9,22 +10,26 @@ namespace Core
     public class PromocaoCore : AbstractValidator<Promocao>
     {
         private Promocao _promocao;
+        private readonly IMapper _mapper;
+
         public Sistema db { get; set; }
 
         // Construtor sem argumento inicando a base dados
-        public PromocaoCore()
+        public PromocaoCore(IMapper Mapper)
         {
+            _mapper = Mapper;
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
         }
         // Construtor com a validação
-        public PromocaoCore(Promocao promocao)
+        public PromocaoCore(PromocaoView promocao, IMapper Mapper)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
 
             db = db ?? new Sistema();
 
-            _promocao = promocao;
+            _mapper = Mapper;
+            _promocao = _mapper.Map<PromocaoView, Promocao>(promocao);
 
             RuleFor(p => p.Descricao).MinimumLength(3).WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
             RuleFor(p => p.DataFinal).GreaterThan(DateTime.Now);
@@ -139,26 +144,13 @@ namespace Core
         /// <param name="id"></param>
         /// <param name="promocao"></param>
         /// <returns></returns>
-        public Retorno AtualizarumaPromocao(string id, Promocao promocao)
+        public Retorno AtualizarumaPromocao(string id)
         {
             var umaPromocao = db.Promocoes.FirstOrDefault(c => c.Id == id);
 
             if (umaPromocao == null) return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
 
-            if (promocao.Descricao != null)
-                umaPromocao.Descricao = promocao.Descricao;
-
-            if (promocao.TaxaDesconto != 0)
-                umaPromocao.TaxaDesconto = promocao.TaxaDesconto;
-
-            if (promocao.Categoria != 0)
-                umaPromocao.Categoria = promocao.Categoria;
-
-            if (promocao.DataFinal != null)
-                umaPromocao.DataFinal = promocao.DataFinal;
-
-            if (promocao.Concluida)
-                umaPromocao.Concluida = promocao.Concluida;
+            _mapper.Map(_promocao, umaPromocao);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umaPromocao };

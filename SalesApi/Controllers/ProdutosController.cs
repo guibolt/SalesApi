@@ -60,14 +60,14 @@ namespace ApiForSales.Controllers
         [HttpPost]
         public async Task<IActionResult> CadastrarProduto([FromBody] ProdutoView produto)
         {
-            var Core = new ProdutoCore(_mapper).CadastrarUmProduto();
+            var Core = new ProdutoCore(produto,_mapper).CadastrarUmProduto();
             return Core.Status ? Created($"https://localhost/api/Produtos/{Core.Resultado.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método put para atualizar um produto
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarProduto([FromBody]ProdutoView produto, string id)
         {
-            var Core = new ProdutoCore(_mapper).AtualizarUmProduto(id);
+            var Core = new ProdutoCore(produto,_mapper).AtualizarUmProduto(id);
             return Core.Status ? Ok(Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método para deletar produto por id

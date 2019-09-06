@@ -1,5 +1,4 @@
-﻿
-using Core.Util;
+﻿using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -27,7 +26,7 @@ namespace Core
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
             RuleForEach(c => c.Produtos).
-                Must(produto=>db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade ? false:true).
+                Must(produto => db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade ? false : true).
                 WithMessage("O produto está inválido.");
 
             RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0);
@@ -52,15 +51,15 @@ namespace Core
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
             // Testa se as promocoes sao validas, se sim as executa.
-            if (ValidaTodasPromocoes(_pedido))
-            _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
+          //  if (ValidaTodasPromocoes(_pedido))
+                _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
 
             // para movimentar o estoque.
             _pedido.Produtos.ForEach(d => db.Produtos.FirstOrDefault(c => c.Id == d.Id).Quantidade -= d.Quantidade);
 
             //calcula o total e adciona na lista
             _pedido.CalculaTotal();
-       
+
             //procura e atribui valor total para o cliente
             db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id).TotalComprado += _pedido.ValorTotal;
 
@@ -80,7 +79,7 @@ namespace Core
             var todosPedidos = db.Pedidos;
             return todosPedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = db.Pedidos };
         }
-     
+
         /// <summary>
         /// Método para retornar um pedido especifico baseado no id fornecido.
         /// </summary>
@@ -88,7 +87,7 @@ namespace Core
         /// <returns></returns>
         public Retorno BuscarProdutoPorId(string id)
         {
-            var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id) ;
+            var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
             return umPedido == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umPedido };
         }
 
@@ -100,7 +99,7 @@ namespace Core
         public Retorno DeletarPedidoPorID(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
-            if (umPedido == null) new Retorno{ Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umPedido == null) new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Pedidos.Remove(umPedido);
 
@@ -153,7 +152,7 @@ namespace Core
 
             // faço a verificação e depois ordeno por idade. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "MAIORVALOR")
-                return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()};
+                return new Retorno { Status = true, Resultado = db.Pedidos.OrderByDescending(c => c.ValorTotal).Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList() };
 
             // se nao der pra fazer a paginação
 
@@ -161,20 +160,25 @@ namespace Core
                 new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
+
+
         /// <summary>
         /// Método para realizar a validacao de todas as possiveis promocoes dos produtos na lista de pedido em questão.
         /// </summary>
         /// <param name="pedido"></param>
         /// <returns></returns>
-        public bool ValidaTodasPromocoes(Pedido pedido)
-        {
-            foreach (var produto in pedido.Produtos)
-            {
-                if (!db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).ValidaPromocao())
-                    return false;
-            }
 
-            return true;
-        }
+        //public bool ValidaTodasPromocoes(Pedido pedido)
+        //{
+
+        //    foreach (var produto in pedido.Produtos)
+        //    {
+        //        if (!db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).ValidaPromocao())
+        //            return false;
+        //    }
+
+        //    return true;
+
+        //}
     }
 }
