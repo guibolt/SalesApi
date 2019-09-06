@@ -14,30 +14,51 @@ namespace Core
 
         public PedidoCore()
         {
-            
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
         }
 
         public PedidoCore(Pedido pedido)
         {
-
-            
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
 
-            //_pedido = _mapper.Map<PedidoView,Pedido>(pedido);
             _pedido = pedido;
+
+            
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
             RuleForEach(c => c.Produtos).
                 Must(produto => db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade ? false : true).
                 WithMessage("O produto está inválido.");
 
+
             RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0);
 
-            _pedido.Produtos.ForEach(c => c.TrocandoDados(db.Produtos.FirstOrDefault(e => e.Id == c.Id)));
-            _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
+
+            var todosIdProduto = db.Produtos.Select(p => p.Id).ToList();
+            var todosIdsCliente = db.Clientes.Select(p => p.Id).ToList();
+
+
+            foreach (var produto in _pedido.Produtos)
+            {
+                if (db.Produtos.FirstOrDefault(p => p.Id == produto.Id) == null)
+                    produto.TrocandoDados(produto);
+            }
+
+
+
+            //if (db.Produtos.FirstOrDefault(e => e.Id == c.Id ) != nu)
+            //{
+
+            //}
+    //        _pedido.Produtos.ForEach(c => c.TrocandoDados ());
+
+
+
+            
+             _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
+          
         }
 
         /// <summary>
@@ -55,10 +76,9 @@ namespace Core
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
-            // Testa se as promocoes sao validas, se sim as executa.
+            // Realiza as possiveis promocoes.
             ValidaTodasPromocoes(_pedido);
-             //   _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
-
+        
             // para movimentar o estoque.
             _pedido.Produtos.ForEach(d => db.Produtos.FirstOrDefault(c => c.Id == d.Id).Quantidade -= d.Quantidade);
 
@@ -67,6 +87,9 @@ namespace Core
 
             //procura e atribui valor total para o cliente
             db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id).TotalComprado += _pedido.ValorTotal;
+
+            // para atualizar o total comprado pelo cliente
+            _pedido.Cliente.TotalComprado += _pedido.ValorTotal;
 
             //adciona o cliente na lista
             db.Pedidos.Add(_pedido);
@@ -165,8 +188,6 @@ namespace Core
                 new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
-
-
         /// <summary>
         /// Método para realizar a validacao de todas as possiveis promocoes dos produtos na lista de pedido em questão.
         /// </summary>
@@ -175,14 +196,11 @@ namespace Core
 
         public void ValidaTodasPromocoes(Pedido pedido)
         {
-
             foreach (var produto in pedido.Produtos)
             {
-                if (db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria)!=null)
+                if (db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria)!=null && db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).ValidaPromocao())
                     db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).MudaValor(produto);
-                    
             }
-
         }
     }
 }

@@ -13,10 +13,7 @@ namespace Core.Util
             CreateMap<ClienteView, Cliente>();
             CreateMap<ProdutoView, Produto>();
             CreateMap<PromocaoView, Promocao>();
-            CreateMap<PedidoView, Pedido>()
-                .ForPath(d => d.Cliente.Id, opts => opts.MapFrom(s => s.ClienteId))
-                .ForMember(d=>d.Produtos,opts=>opts.MapFrom(src=>src.Produtos));
-          
+      
             CreateMap<Cliente, Cliente>().ForMember(dest => dest.Id, opt => opt.Ignore())
              .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
              .ForMember(dest => dest.Genero, opt => opt.Condition(src => src.Genero != null))
@@ -36,6 +33,8 @@ namespace Core.Util
              .ForMember(dest => dest.TaxaDesconto, opt => opt.Condition(src => src.TaxaDesconto != 0))
              .ForMember(dest => dest.Id, opt => opt.Ignore())
              .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())
+            .ForMember(dest => dest.Concluida, opt => opt.Condition(src => src.Concluida == true))
+
              .ForMember(dest => dest.DataFinal, opt => opt.Condition(src => src.DataFinal != null));
         }
     }

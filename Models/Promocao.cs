@@ -12,7 +12,7 @@ namespace Model
         public DateTime DataFinal { get; set; }
         public double TaxaDesconto { get; set; }
         public Categorias Categoria { get; set; }
-        public bool Concluida { get; set; } = false;
+        public bool Concluida { get; set; }
 
         /// <summary>
         /// método para promover a mudança no valor do produto.
