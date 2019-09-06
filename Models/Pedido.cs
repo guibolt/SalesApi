@@ -6,8 +6,8 @@ namespace Model
     // Model de pedido
     public class Pedido : Base
     {
-        public List<Produto> Produtos { get; set; } = new List<Produto>();
-        public Cliente Cliente { get; set; }
+        public List<Produto> Produtos { get; set; }
+        public Cliente Cliente { get; set; } = new Cliente();
         public double ValorTotal { get; set; }
 
         /// <summary>

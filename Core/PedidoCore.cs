@@ -1,4 +1,5 @@
-﻿using Core.Util;
+﻿using AutoMapper;
+using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -13,15 +14,19 @@ namespace Core
 
         public PedidoCore()
         {
+            
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
         }
 
         public PedidoCore(Pedido pedido)
         {
+
+            
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
 
+            //_pedido = _mapper.Map<PedidoView,Pedido>(pedido);
             _pedido = pedido;
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
@@ -51,8 +56,8 @@ namespace Core
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
             // Testa se as promocoes sao validas, se sim as executa.
-          //  if (ValidaTodasPromocoes(_pedido))
-                _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
+            ValidaTodasPromocoes(_pedido);
+             //   _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
 
             // para movimentar o estoque.
             _pedido.Produtos.ForEach(d => db.Produtos.FirstOrDefault(c => c.Id == d.Id).Quantidade -= d.Quantidade);
@@ -168,17 +173,16 @@ namespace Core
         /// <param name="pedido"></param>
         /// <returns></returns>
 
-        //public bool ValidaTodasPromocoes(Pedido pedido)
-        //{
+        public void ValidaTodasPromocoes(Pedido pedido)
+        {
 
-        //    foreach (var produto in pedido.Produtos)
-        //    {
-        //        if (!db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).ValidaPromocao())
-        //            return false;
-        //    }
+            foreach (var produto in pedido.Produtos)
+            {
+                if (db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria)!=null)
+                    db.Promocoes.FirstOrDefault(c => c.Categoria == produto.Categoria).MudaValor(produto);
+                    
+            }
 
-        //    return true;
-
-        //}
+        }
     }
 }

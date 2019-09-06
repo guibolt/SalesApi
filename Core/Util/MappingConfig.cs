@@ -13,6 +13,9 @@ namespace Core.Util
             CreateMap<ClienteView, Cliente>();
             CreateMap<ProdutoView, Produto>();
             CreateMap<PromocaoView, Promocao>();
+            CreateMap<PedidoView, Pedido>()
+                .ForPath(d => d.Cliente.Id, opts => opts.MapFrom(s => s.ClienteId))
+                .ForMember(d=>d.Produtos,opts=>opts.MapFrom(src=>src.Produtos));
           
             CreateMap<Cliente, Cliente>().ForMember(dest => dest.Id, opt => opt.Ignore())
              .ForMember(dest => dest.DataCadastro, opt => opt.Ignore())

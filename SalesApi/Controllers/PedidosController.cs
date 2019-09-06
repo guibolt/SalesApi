@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using Model;
@@ -47,7 +48,7 @@ namespace ApiForSales.Controllers
         public async Task<IActionResult> EfetuarPedido([FromBody] Pedido pedido)
         {
             var Core = new PedidoCore(pedido).RealizarUmPedido();
-            return Core.Status ? Created($"https://localhost/api/Pedidos/{pedido.Id}", Core.Resultado) : BadRequest(Core.Resultado);
+            return Core.Status ? Created($"https://localhost/api/Pedidos/{Core.Resultado.Id}", Core.Resultado) : BadRequest(Core.Resultado);
         }
         // método para deletar produto por id
         [HttpDelete("{id}")]
