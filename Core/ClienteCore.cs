@@ -2,7 +2,6 @@
 using FluentValidation;
 using Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -31,7 +30,9 @@ namespace Core
             RuleFor(c => c.Cpf).Length(11, 11).NotNull().WithMessage("Cpf inválido");
             RuleFor(c => c.Genero.ToUpper()).NotNull().Must(c => c == "MASCULINO"|| c == "FEMININO").WithMessage($"Campo sexo não pode ser nulo");
         }
-        // Método para cadastar um cliente
+        /// <summary>
+        /// Método para cadastar um cliente
+        /// </summary>
         public Retorno CadastrarCliente()
         {
             var valida = Validate(_cliente);
@@ -47,17 +48,34 @@ namespace Core
 
             return new Retorno { Status = true, Resultado = _cliente };
         }
-        // Método para retornar um cliente
+
+        /// <summary>
+        /// Método para buscar um cliente baseado no Id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno BuscarCliente(string id)
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
             return umCliente == null ? new Retorno { Status = false, Resultado = "Cliente nao existe na base de dados" } : new Retorno { Status = true, Resultado = umCliente };
         }
-        // método para retornar todos os clientes registrados.
-        public Retorno BuscarTodosClientes() =>  db.Clientes.Count == 0 ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : 
-            new Retorno { Status = true, Resultado = db.Clientes.OrderBy(n => n.Nome) };
+
+        /// <summary>
+        /// método para retornar todos os clientes registrados na base de dados.
+        /// </summary>
+        /// <returns></returns>
+        public Retorno BuscarTodosClientes()
+        {
+            var todosClientes = db.Clientes;
+            return todosClientes.Count == 0 ? new Retorno { Status = false, Resultado = "Não exitem registros na base" } : new Retorno { Status = true, Resultado = db.Clientes.OrderBy(n => n.Nome) };
+        }
         
-        public Retorno DeletarPorId(string id)
+        /// <summary>
+        /// Método para deletar um cliente por id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Retorno DeletarCliente(string id)
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
             if (umCliente == null)
@@ -68,6 +86,13 @@ namespace Core
 
             return new Retorno { Status = true, Resultado = "Registro deletado!" };
         }
+
+        /// <summary>
+        /// Método para atualizar os dados de um cliente baseado no id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cliente"></param>
+        /// <returns></returns>
         // Método para atualizar por id
         public Retorno AtualizarCliente(string id, Cliente cliente)
         {
@@ -89,7 +114,12 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umCliente };
         }
-        //método para buscar por data
+        /// <summary>
+        /// Método para realizar a busca por data.
+        /// </summary>
+        /// <param name="dataComeço"></param>
+        /// <param name="dataFim"></param>
+        /// <returns></returns>
         public Retorno BuscaClientePorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -108,7 +138,13 @@ namespace Core
             return new Retorno { Status = true, Resultado = db.Clientes.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
 
-        // Método para exibir os registros por paginação
+        /// <summary>
+        ///  Método para exibir os registros por paginação
+        /// </summary>
+        /// <param name="ordempor"></param>
+        /// <param name="numeroPagina"></param>
+        /// <param name="qtdRegistros"></param>
+        /// <returns></returns>
         public Retorno ClentesPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // Limitando a quantidade registros para a paginação

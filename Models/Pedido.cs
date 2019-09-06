@@ -9,8 +9,10 @@ namespace Model
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public Cliente Cliente { get; set; }
         public double ValorTotal { get; set; }
-   
-        // Método para realizar o calcuto atribuir o valor ao pedido.
+
+        /// <summary>
+        ///Método para realizar o calculo do pedido completo atribuir o valor ao pedido.
+        /// </summary>
         public void CalculaTotal()
         {
             Produtos.ForEach(c => ValorTotal += c.SubTotal());

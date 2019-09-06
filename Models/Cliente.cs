@@ -9,9 +9,12 @@ namespace Model
         public int Idade { get; set; }
         public string Cpf { get; set; }
         public string Genero { get; set; }
-        public double TotalComprado { get; set; } 
+        public double TotalComprado { get; set; }
 
-        // método para realizar a troca dos dados de um objeto nulo para um completo
+        /// <summary>
+        ///  método para realizar a troca dos dados de um objeto nulo para um completo
+        /// </summary>
+        /// <param name="cliente"></param>
         public void TrocandoDados(Cliente cliente)
         {
             Idade = cliente.Idade;

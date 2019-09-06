@@ -2,7 +2,6 @@
 using FluentValidation;
 using Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -32,8 +31,10 @@ namespace Core
             RuleFor(p => p.TaxaDesconto).GreaterThan(0).LessThan(90).WithMessage("Taxa precisa estar entre 1 e 90");
             RuleFor(p => p.Categoria).IsInEnum().WithMessage("Categoria nao existe.");
         }
-
-        //Método para cadastrar uma promocao
+        /// <summary>
+        /// Método para cadastrar uma promocao
+        /// </summary>
+        /// <returns></returns>
         public Retorno CadastrarPromocao()
         {
             var valida = Validate(_promocao);
@@ -44,35 +45,53 @@ namespace Core
             if (db.Promocoes.Any(c => c.Descricao == _promocao.Descricao))
                 return new Retorno() { Status = false, Resultado = "Essa promocão ja está cadastrada" };
 
-                
             db.Promocoes.Add(_promocao);
             Arq.ManipulacaoDeArquivos(false, db);
 
             return new Retorno() { Status = true, Resultado = _promocao };
         }
-        // Método para retornar um produto
+        /// <summary>
+        /// Método para retornar um produto se baseando no id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno BuscarumaPromocao(string id)
         {
             var umaPromocao = db.Promocoes.FirstOrDefault(c => c.Id == id);
             return umaPromocao == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umaPromocao };
         }
-
-        // Método para deletar por id
+        /// <summary>
+        /// Método para deletar uma promocao se baseando no id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno DeletarPromocao(string id)
         {
             var umaPromocao = db.Promocoes.FirstOrDefault(c => c.Id == id);
 
-            if (umaPromocao == null)  return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umaPromocao == null) return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Promocoes.Remove(umaPromocao);
             Arq.ManipulacaoDeArquivos(false, db);
-            return new Retorno { Status = true, Resultado = "Produto deletado!"};
+            return new Retorno { Status = true, Resultado = "Produto deletado!" };
         }
-        // método para retornar todos os produtos registrados.
-        public Retorno BuscarTodasPromoces() => db.Promocoes.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
-        : new Retorno { Status = true, Resultado = db.Promocoes };
-        
+        /// <summary>
+        ///  método para retornar todos os produtos registrados na base de dados.
+        /// </summary>
+        /// <returns></returns>
+        public Retorno BuscarTodasPromoces()
+        {
+            var todasPromocoes = db.Promocoes;
+            return todasPromocoes.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todasPromocoes };
+        }
 
+        /// <summary>
+        /// Método para fazer a exibição por paginação
+        /// </summary>
+        /// <param name="ordempor"></param>
+        /// <param name="numeroPagina"></param>
+        /// <param name="qtdRegistros"></param>
+        /// <returns></returns>
         // Método para exibir os registros por paginação
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
@@ -85,13 +104,18 @@ namespace Core
 
             // faço a verificação e depois ordeno por nome. 
             if (numeroPagina > 0 && qtdRegistros > 0 && ordempor.ToUpper().Trim() == "DESCRICAO")
-                return new Retorno { Status = true, Resultado = db.Promocoes.OrderBy(c => c.Descricao.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList())};
+                return new Retorno { Status = true, Resultado = db.Promocoes.OrderBy(c => c.Descricao.Skip((numeroPagina - 1) * qtdRegistros).Take(qtdRegistros).ToList()) };
 
             // se nao der pra fazer a paginação
             return new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
-        // Método para retornar produto por data de cadastro
+        /// <summary>
+        /// Método para retornar produto por data.
+        /// </summary>
+        /// <param name="dataComeço"></param>
+        /// <param name="dataFim"></param>
+        /// <returns></returns>
         public Retorno BuscaProdutoPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -110,7 +134,12 @@ namespace Core
             return new Retorno { Status = true, Resultado = db.Promocoes.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
 
-        // Método para atualizar por id
+        /// <summary>
+        /// Método para atualizar uma promocão por id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="promocao"></param>
+        /// <returns></returns>
         public Retorno AtualizarumaPromocao(string id, Promocao promocao)
         {
             var umaPromocao = db.Promocoes.FirstOrDefault(c => c.Id == id);
@@ -126,11 +155,14 @@ namespace Core
             if (promocao.Categoria != 0)
                 umaPromocao.Categoria = promocao.Categoria;
 
+            if (promocao.DataFinal != null)
+                umaPromocao.DataFinal = promocao.DataFinal;
+
+            if (promocao.Concluida)
+                umaPromocao.Concluida = promocao.Concluida;
+
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umaPromocao };
         }
-
-        // Exibe as categorias possiveis no momento
-        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
     }
 }

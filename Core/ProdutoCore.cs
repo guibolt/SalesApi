@@ -33,8 +33,10 @@ namespace Core
             RuleFor(p => p.Quantidade).NotEmpty().GreaterThan(0).WithMessage("A quantidade do produto deve ser de no minimo um produto");
             RuleFor(p => p.Categoria).IsInEnum().WithMessage("Categoria nao existe.");
         }
-
-        //Método para cadastrar um produto
+        /// <summary>
+        /// Método para cadastrar um produto
+        /// </summary>
+        /// <returns></returns>
         public Retorno CadastrarUmProduto()
         {
             var valida = Validate(_produto);
@@ -50,31 +52,53 @@ namespace Core
 
             return new Retorno() { Status = true, Resultado = _produto };
         }
-        // Método para retornar um produto
+        
+        /// <summary>
+        ///  Método para retornar um produto se baseando no id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno BuscarUmProduto(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
             return umProduto == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umProduto };
         }
 
+        /// <summary>
+        /// Método para deletar um produto baseando no id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // Método para deletar por id
         public Retorno DeletarProdutoPorId(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
-            if (umProduto == null)  return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umProduto == null) return new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Produtos.Remove(umProduto);
 
             Arq.ManipulacaoDeArquivos(false, db);
-       
-            return new Retorno { Status = true, Resultado = "Produto deletado!"};
-        }
-        // método para retornar todos os produtos registrados.
-        public Retorno BuscarTodosProdutos() => db.Produtos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." }
-        : new Retorno { Status = true, Resultado = db.Produtos };
 
-        // Método para exibir os registros por paginação
+            return new Retorno { Status = true, Resultado = "Produto deletado!" };
+        }
+        /// <summary>
+        /// método para retornar todos os produtos registrados na base de dados
+        /// </summary>
+        /// <returns></returns>
+        public Retorno BuscarTodosProdutos()
+        {
+            var todosProdutos = db.Produtos;
+            return todosProdutos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base." } : new Retorno { Status = true, Resultado = todosProdutos };
+        }
+
+        /// <summary>
+        /// Método para exibir os pedidos por paginação
+        /// </summary>
+        /// <param name="ordempor"></param>
+        /// <param name="numeroPagina"></param>
+        /// <param name="qtdRegistros"></param>
+        /// <returns></returns>
         public Retorno ProdutosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // Limitando a quantidade registros para a paginação
@@ -98,8 +122,12 @@ namespace Core
             // se nao der pra fazer a paginação
             return new Retorno { Status = true, Resultado = ($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
-
-        // Método para retornar produto por data de cadastro
+        /// <summary>
+        /// Método para retornar produto por data.
+        /// </summary>
+        /// <param name="dataComeço"></param>
+        /// <param name="dataFim"></param>
+        /// <returns></returns>
         public Retorno BuscaProdutoPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -117,8 +145,12 @@ namespace Core
             // returno a lista completa entre as duas datas informadas.
             return new Retorno { Status = true, Resultado = db.Produtos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
-
-        // Método para atualizar por id
+        /// <summary>
+        /// Método para atualizar um produto por id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="produto"></param>
+        /// <returns></returns>
         public Retorno AtualizarUmProduto(string id, Produto produto)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
@@ -137,7 +169,26 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umProduto };
         }
-        // Exibe as categorias possiveis no momento
-        public Retorno ExibirCategorias() => new Retorno { Status = true, Resultado = db.ListaCategorias };
+
+        /// <summary>
+        /// método para a exibição das categorias dos produtos.
+        /// </summary>
+        /// <returns></returns>
+        public Retorno ExibirCategorias() => new Retorno
+        {
+            Status = true,
+            Resultado = new List<string>
+            {
+             "SMARTPHONES Categoria: 1",
+            "INFORMATICA Categoria: 2",
+            "GAMES Categoria: 3",
+            "VESTUARIO Categoria: 4",
+            "SAUDE Categoria: 5",
+            "FITNESS Categoria: 6",
+            "MOVEIS Categoria: 7",
+            "BRINQUEDOS Categoria: 8",
+            "COSMETICOS Categoria: 9",
+            "ELECTRODOMESTICOS Categoria: 10", }
+        };
     }
 }

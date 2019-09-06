@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Model
+namespace Model.Enum
 {
+    //Enum com as categorias disponiveis
     public enum Categorias : int
     {
         SMARTPHONES = 1,

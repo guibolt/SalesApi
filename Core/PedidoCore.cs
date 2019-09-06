@@ -3,7 +3,6 @@ using Core.Util;
 using FluentValidation;
 using Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -37,7 +36,10 @@ namespace Core
             _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
         }
 
-        //Método para relizar o pedido.
+        /// <summary>
+        /// Método para relização do pedido.
+        /// </summary>
+        /// <returns></returns>
         public Retorno RealizarUmPedido()
         {
             var valida = Validate(_pedido);
@@ -49,7 +51,7 @@ namespace Core
             if (!db.Clientes.Any(c => c.Id == _pedido.Cliente.Id))
                 return new Retorno { Status = false, Resultado = "Esse cliente não existe na base de dados!" };
 
-            // método para executar a promocao
+            // Testa se as promocoes sao validas, se sim as executa.
             if (ValidaTodasPromocoes(_pedido))
             _pedido.Produtos.ForEach(p => db.Promocoes.FirstOrDefault(c => c.Categoria == p.Categoria).MudaValor(p));
 
@@ -68,28 +70,49 @@ namespace Core
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = _pedido };
         }
-        public Retorno BuscarTodosPedidos() => db.Pedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } :
-            new Retorno { Status = true, Resultado = db.Pedidos };
 
-        // Método para returnar um registro
+        /// <summary>
+        /// Método para buscar todos pedidos da base de dados.
+        /// </summary>
+        /// <returns></returns>
+        public Retorno BuscarTodosPedidos()
+        {
+            var todosPedidos = db.Pedidos;
+            return todosPedidos.Count == 0 ? new Retorno { Status = false, Resultado = "Não existem registros na base" } : new Retorno { Status = true, Resultado = db.Pedidos };
+        }
+     
+        /// <summary>
+        /// Método para retornar um pedido especifico baseado no id fornecido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno BuscarProdutoPorId(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id) ;
             return umPedido == null ? new Retorno { Status = false, Resultado = "Registro nao existe na base de dados" } : new Retorno { Status = true, Resultado = umPedido };
         }
 
-        //Método para deletar pedido por id
+        /// <summary>
+        /// Método para deletar pedido por id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Retorno DeletarPedidoPorID(string id)
         {
             var umPedido = db.Pedidos.FirstOrDefault(c => c.Id == id);
-            if (umPedido == null) new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
+            if (umPedido == null) new Retorno{ Status = false, Resultado = "Registro nao existe na base de dados" };
 
             db.Pedidos.Remove(umPedido);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = "Registro removido!" };
         }
-        // Método para retornar pedido por data de cadastro
+        /// <summary>
+        /// Método para retornar pedido por data
+        /// </summary>
+        /// <param name="dataComeço"></param>
+        /// <param name="dataFim"></param>
+        /// <returns></returns>
         public Retorno BuscaPedidoPorData(string dataComeço, string dataFim)
         {
             // Tento fazer a conversao e checho se ela nao for feita corretamente, se ambas nao forem corretas retorno FALSE
@@ -108,7 +131,13 @@ namespace Core
             return new Retorno { Status = true, Resultado = db.Pedidos.Where(c => Convert.ToDateTime(c.DataCadastro) >= primeiraData && Convert.ToDateTime(c.DataCadastro) <= segundaData).ToList() };
         }
 
-        // Método para exibir os registros por paginação
+        /// <summary>
+        ///  Método para exibir os registros por paginação
+        /// </summary>
+        /// <param name="ordempor"></param>
+        /// <param name="numeroPagina"></param>
+        /// <param name="qtdRegistros"></param>
+        /// <returns></returns>
         public Retorno PedidosPorPaginacao(string ordempor, int numeroPagina, int qtdRegistros)
         {
             // Limitando a quantidade registros para a paginação
@@ -130,6 +159,11 @@ namespace Core
             return new Retorno { Status = true, Resultado =($"Não foi fazer a paginação, registros totais: {db.Pedidos.Count()}, Exibindo a lista padrão:", db.Pedidos.Take(5).ToList()) };
         }
 
+        /// <summary>
+        /// Método para realizar a validacao de todas as possiveis promocoes dos produtos na lista de pedido em questão.
+        /// </summary>
+        /// <param name="pedido"></param>
+        /// <returns></returns>
         public bool ValidaTodasPromocoes(Pedido pedido)
         {
             foreach (var produto in pedido.Produtos)
