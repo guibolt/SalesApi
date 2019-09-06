@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Core.Util;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,14 @@ namespace SalesApi
             {
                 c.SwaggerDoc("v1", new Info { Title = "ApiForSales", Version = "v1" });
             });
+
+            //Injeção de dependencia do automapper
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingConfig());
+            });
+            IMapper mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

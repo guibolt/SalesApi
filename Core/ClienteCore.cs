@@ -1,4 +1,5 @@
-﻿using Core.Util;
+﻿using AutoMapper;
+using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -9,22 +10,26 @@ namespace Core
     public class ClienteCore : AbstractValidator<Cliente>
     {
         private Cliente _cliente;
+        private readonly IMapper _mapper;
         public Sistema db { get; set; }
         // Construtor sem argumento inicando a base dados
-        public ClienteCore()
+        public ClienteCore(IMapper mapper)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
+            _mapper = mapper;
         }
 
         // Construtor com a validação
-        public ClienteCore(Cliente Cliente)
+        public ClienteCore(ClienteView Cliente, IMapper mapper)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
 
-            _cliente = Cliente;
-     
+            _mapper = mapper;
+            _cliente = mapper.Map<ClienteView,Cliente>(Cliente);
+          
+
             RuleFor(c => c.Idade).GreaterThan(6).WithMessage("A idade do cliente deve ser maior que 6");
             RuleFor(c => c.Nome).MinimumLength(3).NotNull().WithMessage("O nome deve conter mais que 2 caracteres");
             RuleFor(c => c.Cpf).Length(11, 11).NotNull().WithMessage("Cpf inválido");
@@ -94,22 +99,12 @@ namespace Core
         /// <param name="cliente"></param>
         /// <returns></returns>
         // Método para atualizar por id
-        public Retorno AtualizarCliente(string id, Cliente cliente)
+        public Retorno AtualizarCliente(string id)
         {
             var umCliente = db.Clientes.FirstOrDefault(c => c.Id == id);
             if (umCliente == null) return new Retorno() { Status = false, Resultado = "Registro nao existe na base de dados" };
 
-            if (cliente.Cpf != null)
-                umCliente.Cpf = cliente.Cpf;
-
-            if (cliente.Genero != null)
-                umCliente.Genero = cliente.Genero;
-
-            if (cliente.Nome != null)
-                 umCliente.Nome = cliente.Nome;
-
-            if (cliente.Idade != 0)
-                umCliente.Idade = cliente.Idade;
+            _mapper.Map(_cliente, umCliente);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umCliente };

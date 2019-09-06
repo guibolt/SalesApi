@@ -53,7 +53,7 @@ namespace ApiForSales.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarPedido(string id)
         {
-            var Core = new ProdutoCore().DeletarProdutoPorId(id);
+            var Core = new PedidoCore().DeletarPedidoPorID(id);
             return Core.Status ? Accepted(Core.Resultado) : BadRequest(Core.Resultado);
         }
     }

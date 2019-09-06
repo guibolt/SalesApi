@@ -1,4 +1,5 @@
-﻿using Core.Util;
+﻿using AutoMapper;
+using Core.Util;
 using FluentValidation;
 using Model;
 using System;
@@ -9,23 +10,28 @@ namespace Core
 {  // Classe contendo as regras de negocio
     public class ProdutoCore : AbstractValidator<Produto>
     {
+     
         private Produto _produto;
+        private readonly IMapper _mapper;
         public Sistema db { get; set; }
 
         // Construtor sem argumento inicando a base dados
-        public ProdutoCore()
+        public ProdutoCore(IMapper Mapper)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
             db = db ?? new Sistema();
+
+            _mapper = Mapper;
         }
         // Construtor com a validação
-        public ProdutoCore(Produto produto)
+        public ProdutoCore(ProdutoView produto, IMapper Mapper)
         {
             db = Arq.ManipulacaoDeArquivos(true, null).sistema;
 
             db = db ?? new Sistema();
 
-            _produto = produto;
+            _mapper = Mapper;
+            _produto = Mapper.Map<ProdutoView, Produto>(produto);
 
             RuleFor(p => p.Nome).MinimumLength(3).
                 WithMessage("Erro, o nome deve ter no minimo 3 caracteres e nao pode ser nulo");
@@ -153,20 +159,13 @@ namespace Core
         /// <param name="id"></param>
         /// <param name="produto"></param>
         /// <returns></returns>
-        public Retorno AtualizarUmProduto(string id, Produto produto)
+        public Retorno AtualizarUmProduto(string id)
         {
             var umProduto = db.Produtos.FirstOrDefault(c => c.Id == id);
 
             if (umProduto == null) return new Retorno { Status = false, Resultado = "Esse produto nao está registrado na base de dados" };
 
-            if (produto.Nome != null)
-                umProduto.Nome = produto.Nome;
-
-            if (produto.Preco != 0)
-                umProduto.Preco = produto.Preco;
-
-            if (produto.Quantidade != 0)
-                umProduto.Quantidade = produto.Quantidade;
+            _mapper.Map(_produto, umProduto);
 
             Arq.ManipulacaoDeArquivos(false, db);
             return new Retorno { Status = true, Resultado = umProduto };
