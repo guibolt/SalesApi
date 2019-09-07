@@ -10,7 +10,7 @@ namespace Core
 {  // Classe contendo as regras de negocio
     public class ProdutoCore : AbstractValidator<Produto>
     {
-     
+
         private Produto _produto;
         private readonly IMapper _mapper;
         public Sistema db { get; set; }

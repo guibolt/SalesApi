@@ -3,6 +3,7 @@ using Core.Util;
 using FluentValidation;
 using Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Core
@@ -25,40 +26,27 @@ namespace Core
 
             _pedido = pedido;
 
-            
+            //Validacoes com o fluentValidator
             RuleFor(c => c.Produtos).NotEmpty().WithMessage("A lista de produtos nao pode ser vazia");
             RuleFor(c => c.Cliente).NotNull().WithMessage("O Cliente nao pode ser nulo");
             RuleForEach(c => c.Produtos).
-                Must(produto => db.Produtos.SingleOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.SingleOrDefault(p => p.Id == produto.Id).Quantidade ? false : true).
+                Must(produto => db.Produtos.FirstOrDefault(p => p.Id == produto.Id) == null || produto.Quantidade > db.Produtos.FirstOrDefault(p => p.Id == produto.Id).Quantidade ? false : true).
                 WithMessage("O produto está inválido.");
 
+            RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0).WithMessage("A quantidade do produto precisa ser maior que 0");
 
-            RuleForEach(c => c.Produtos).Must(p => p.Quantidade > 0);
-
-
-            var todosIdProduto = db.Produtos.Select(p => p.Id).ToList();
-            var todosIdsCliente = db.Clientes.Select(p => p.Id).ToList();
-
-
+            // validando se os produtos existem
             foreach (var produto in _pedido.Produtos)
             {
-                if (db.Produtos.FirstOrDefault(p => p.Id == produto.Id) == null)
-                    produto.TrocandoDados(produto);
+                var umProduto = db.Produtos.FirstOrDefault(p => p.Id == produto.Id);
+                if (umProduto != null)
+                    produto.TrocandoDados(umProduto);
             }
 
-
-
-            //if (db.Produtos.FirstOrDefault(e => e.Id == c.Id ) != nu)
-            //{
-
-            //}
-    //        _pedido.Produtos.ForEach(c => c.TrocandoDados ());
-
-
-
-            
-             _pedido.Cliente.TrocandoDados(db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id));
-          
+            //validando se o cliente existe
+            var umCliente = db.Clientes.FirstOrDefault(c => c.Id == _pedido.Cliente.Id);
+            if (umCliente != null)
+                _pedido.Cliente.TrocandoDados(umCliente);
         }
 
         /// <summary>

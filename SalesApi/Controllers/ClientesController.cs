@@ -10,8 +10,10 @@ namespace ApiForSales.Controllers
     [ApiController]
     public class ClientesController : ControllerBase
     {
+        // propriedade automapper
         private readonly IMapper _mapper;
 
+        // construtor para a utilização do automapper por meio de injeçao de dependecia
         public ClientesController(IMapper mapper)
         {
             _mapper = mapper;
